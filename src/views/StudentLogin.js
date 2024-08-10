@@ -4,7 +4,6 @@ import logo from '../assets/lightbulb.png';
 
 const PageContainer = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
@@ -12,85 +11,88 @@ const PageContainer = styled.div`
 `;
 
 const Card = styled.div`
-  background-color: #f5f5dc;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #faf3e0;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e6e6e6;
   text-align: center;
+  max-width: 400px;
+  margin-top: 75px;
+  width: 100%;
 `;
 
 const Logo = styled.img`
-  width: 50px;
-  height: 50px;
-  margin-bottom: 1rem;
+  width: 75px;
+  height: 75px;
 `;
 
 const Heading = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: bold;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
   font-family: 'Quicksand', sans-serif;
+  color: #333;
 `;
 
 const InputFieldDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 20px;
   margin-top: 2rem;
-  gap: 30px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 20px;
-  }
 `;
 
-const Username = styled.input`
+const InputField = styled.input`
   font-family: 'Quicksand', sans-serif;
-  border-radius: 5px;
-  border: none;
-  font-size: 0.85rem;
-  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  padding: 12px 20px;
+  width: 100%;
+  max-width: 300px;
+  transition: border-color 0.3s ease;
+  background-color: #fff;
 
   &:hover, &:focus {
-    border: 2px solid black;
-  }
-`;
-
-const Password = styled.input`
-  font-family: 'Quicksand', sans-serif;
-  border-radius: 5px;
-  border: none;
-  font-size: 0.85rem;
-  padding: 9px 16px;
-
-  &:hover, &:focus {
-    border: 2px solid black;
+    border-color: #FFD700;
+    outline: none;
   }
 `;
 
 const Button = styled.button`
   font-family: 'Quicksand', sans-serif;
-  background-color: #d3d3d3;
-  color: #000000;
+  background-color: #ffcc00;
+  color: #333;
   border: none;
   border-radius: 30px;
-  padding: 0.85rem 1.7rem;
-  font-size: 0.85rem;
+  padding: 12px 0;
+  font-size: 1rem;
   font-weight: bold;
   margin-top: 2rem;
-  width: 200px;
+  width: 100%;
+  max-width: 200px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+
   &:hover {
-    background-color: #c0c0c0;
+    background-color: #e6b800;
+    transform: translateY(-3px);
   }
 `;
 
 const SignUpLink = styled.p`
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: blue;
   font-weight: bold;
+  margin-top: 1rem;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
 `;
 
 const ErrorMessage = styled.p`
@@ -122,8 +124,8 @@ const StudentLogin = () => {
         <Logo src={logo} alt="Lightbulb Logo" />
         <Heading>Student Login</Heading>
         <InputFieldDiv>
-          <Username placeholder="Enter your username" />
-          <Password placeholder="Enter your password" />
+          <InputField placeholder="Enter your username" />
+          <InputField placeholder="Enter your password" type="password" />
         </InputFieldDiv>
         <Button onClick={handleLogin}>Login</Button>
         {error && <ErrorMessage>{error}</ErrorMessage>}
