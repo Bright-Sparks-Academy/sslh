@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from './../firebaseConfig.js';  // Ensure this path matches your project structure
+import { auth, db } from './../firebaseConfig.js'; // Adjust path as necessary
 import logo from '../assets/lightbulb.png';
 
 const PageContainer = styled.div`
@@ -79,33 +80,38 @@ const ErrorMessage = styled.p`
   margin-top: 1rem;
 `;
 
-
 const StudentLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Use useNavigate from react-router-dom
 
   const handleLogin = async () => {
     try {
       // Authenticate the user
       const userCredential = await signInWithEmailAndPassword(auth, username, password);
       const user = userCredential.user;
-
+  
       // Fetch user role from Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+  
       if (!userDoc.exists()) {
         throw new Error('User document does not exist.');
       }
+      
       const userData = userDoc.data();
       const userRole = userData.role;
-
+  
+      console.log(`User role: ${userRole}`); // Add this line for debugging
+  
       // Redirect based on role
       if (userRole === 'Student') {
-        window.location.href = '/student-dashboard';
+        navigate('/student/dashboard');
       } else if (userRole === 'Teacher') {
-        window.location.href = '/teacher-dashboard';
+        navigate('/teacher/dashboard');
       } else if (userRole === 'Admin') {
-        window.location.href = '/admin-dashboard';
+        navigate('/admin/dashboard');
       } else {
         throw new Error('No role assigned to this user.');
       }
@@ -120,8 +126,18 @@ const StudentLogin = () => {
         <Logo src={logo} alt="Lightbulb Logo" />
         <Heading>Student Login</Heading>
         <InputFieldDiv>
-          <Input type="email" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} />
-          <Input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            type="email"
+            placeholder="Enter your username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </InputFieldDiv>
         <Button onClick={handleLogin}>Login</Button>
         {error && <ErrorMessage>{error}</ErrorMessage>}

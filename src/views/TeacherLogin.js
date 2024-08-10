@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from './../firebaseConfig.js'; // Adjust path as necessary
 import logo from '../assets/lightbulb.png';
 
 const PageContainer = styled.div`
@@ -34,35 +38,20 @@ const Heading = styled.h1`
 
 const InputFieldDiv = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 2rem;
-  gap: 30px; /* Adjust the gap as needed */
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 20px;
-  }
+  margin-top: 1rem;
+  gap: 15px;
 `;
 
-const Username = styled.input`
+const Input = styled.input`
   font-family: 'Quicksand', sans-serif;
   border-radius: 5px;
   border: none;
   font-size: 0.85rem;
   padding: 9px 16px;
-
-  &:hover, &:focus {
-    border: 2px solid black;
-  }
-`;
-
-const Password = styled.input`
-  font-family: 'Quicksand', sans-serif;
-  border-radius: 5px;
-  border: none;
-  font-size: 0.85rem;
-  padding: 9px 16px;
+  width: 80%;
 
   &:hover, &:focus {
     border: 2px solid black;
@@ -71,7 +60,7 @@ const Password = styled.input`
 
 const Button = styled.button`
   font-family: 'Quicksand', sans-serif;
-  background-color: #d3d3d3;
+  background-color: #FFD700;
   color: #000000;
   border: none;
   border-radius: 30px;
@@ -82,15 +71,8 @@ const Button = styled.button`
   width: 200px;
   cursor: pointer;
   &:hover {
-    background-color: #c0c0c0;
+    background-color: #FFCC00;
   }
-`;
-
-const SignUpLink = styled.p`
-  cursor: pointer;
-  font-size: 0.8rem;
-  color: blue;
-  font-weight: bold;
 `;
 
 const ErrorMessage = styled.p`
@@ -99,21 +81,43 @@ const ErrorMessage = styled.p`
 `;
 
 const TeacherLogin = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Use useNavigate from react-router-dom
 
-  const handleLogin = () => {
-    // Simulate a login error
-    const isError = true; // Replace this with actual login validation logic
-
-    if (isError) {
-      setError('Invalid username or password.');
-    } else {
-      setError(null);
+  const handleLogin = async () => {
+    try {
+      // Authenticate the user
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      const user = userCredential.user;
+  
+      // Fetch user role from Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+  
+      if (!userDoc.exists()) {
+        throw new Error('User document does not exist.');
+      }
+      
+      const userData = userDoc.data();
+      const userRole = userData.role;
+  
+      console.log(`User role: ${userRole}`); // Add this line for debugging
+  
+      // Redirect based on role
+      if (userRole === 'Student') {
+        navigate('/student/dashboard');
+      } else if (userRole === 'Teacher') {
+        navigate('/teacher/dashboard');
+      } else if (userRole === 'Admin') {
+        navigate('/admin/dashboard');
+      } else {
+        throw new Error('No role assigned to this user.');
+      }
+    } catch (error) {
+      setError(error.message || 'Invalid username or password.');
     }
-  };
-
-  const handleSignupRedirect = () => {
-    window.location.href = 'https://tally.so/r/n0BGxN';
   };
 
   return (
@@ -122,12 +126,21 @@ const TeacherLogin = () => {
         <Logo src={logo} alt="Lightbulb Logo" />
         <Heading>Teacher Login</Heading>
         <InputFieldDiv>
-          <Username placeholder="Enter your username" />
-          <Password placeholder="Enter your password" />
+          <Input
+            type="email"
+            placeholder="Enter your username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </InputFieldDiv>
         <Button onClick={handleLogin}>Login</Button>
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        <SignUpLink onClick={handleSignupRedirect}>Sign up</SignUpLink>
       </Card>
     </PageContainer>
   );
