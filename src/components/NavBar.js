@@ -37,11 +37,9 @@ const ProfileContainer = styled.div`
   position: relative;
 `;
 
-const ProfileImage = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+const ProfileImage = styled.button`
   cursor: pointer;
+
 `;
 
 const ProfileDropdown = styled.div`
@@ -60,6 +58,20 @@ const DropdownItem = styled(Link)`
   padding: 5px 10px;
   color: #000;
   text-decoration: none;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
+const DropdownButton = styled.button`
+  display: block;
+  padding: 5px 10px;
+  color: #000;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
   &:hover {
     background-color: #f5f5f5;
   }
@@ -88,7 +100,7 @@ const NavBar = ({ user }) => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -102,23 +114,18 @@ const NavBar = ({ user }) => {
         </NavLink>
         {user && (
           <>
-            <NavLink to="/dashboard" $isActive={location.pathname === '/dashboard'}>Dashboard</NavLink>
+            <NavLink to="/student/dashboard" $isActive={location.pathname === '/student/dashboard'}>Dashboard</NavLink>
             <NavLink to="/messaging" $isActive={location.pathname === '/messaging'}>Messaging</NavLink>
-            <NavLink to="/homework" $isActive={location.pathname === '/homework'}>Homework</NavLink>
+            {/* <NavLink to="/homework" $isActive={location.pathname === '/homework'}>Homework</NavLink>
             <NavLink to="/recordings-page" $isActive={location.pathname === '/recordings-page'}>Recordings</NavLink>
             <NavLink to="/mastery" $isActive={location.pathname === '/mastery'}>AI Learning Plans</NavLink>
-            <NavLink to="/diagnostic-test" $isActive={location.pathname === '/diagnostic-test'}>Diagnostic Test</NavLink>
+            <NavLink to="/diagnostic-test" $isActive={location.pathname === '/diagnostic-test'}>Diagnostic Test</NavLink> */}
           </>
         )}
       </NavLinks>
       {user ? (
         <ProfileContainer>
-          <ProfileImage src={user.photoURL} alt={user.displayName} onClick={toggleDropdown} />
-          <ProfileDropdown isOpen={isDropdownOpen}>
-            <DropdownItem to="/profile">Profile</DropdownItem>
-            <DropdownItem to="/settings">Settings</DropdownItem>
-            <DropdownItem as="button" onClick={handleLogout}>Logout</DropdownItem>
-          </ProfileDropdown>
+          <ProfileImage onClick={handleLogout}>Logout</ProfileImage>
         </ProfileContainer>
       ) : (
         <LoginButton to="/login">Login</LoginButton>
