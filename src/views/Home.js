@@ -9,14 +9,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 const PageContainer = styled.div`
   font-family: 'Quicksand', sans-serif;
-  background-color: #ffd900;
-  color: #000000;
+  background: linear-gradient(135deg, #ffd900 0%, #f5b700 100%);
+  color: #333;
   height: 200vh; /* For parallax effect */
   overflow-x: hidden;
 `;
 
 const ContentContainer = styled.div`
-  font-family: 'Quicksand', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,20 +25,19 @@ const ContentContainer = styled.div`
 `;
 
 const Heading = styled.h1`
-  font-family: 'Quicksand', sans-serif;
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: bold;
-  color: #000000;
+  color: #333;
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 `;
 
 const Subheading = styled.p`
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.5rem;
-  color: black;
+  font-size: 1.8rem;
+  color: #555;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
 `;
 
 const ParallaxSection = styled.div`
@@ -53,8 +51,8 @@ const CenterTextButtonDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  gap: 50px; /* Adjust the gap as needed */
+  margin-bottom: 30px;
+  gap: 50px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -62,59 +60,23 @@ const CenterTextButtonDiv = styled.div`
   }
 `;
 
-const LeftCenterTextButton = styled.button`
-  color: black;
-  background-color: #f5f5dc;
-  border: none;
-  border-radius: 10px;
-  padding: 11px 21px;
-  font-size: 1rem;
-  cursor: pointer;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 400;
-  width: 150px; /* Set a consistent width for buttons */
-  gap: 1rem;
-  
-  &:hover, &:focus {
-    transform: scale(1.02); /* Expand the button slightly on hover */
-    font-weight: 600;
-  }
-`;
-
-const RightCenterTextButton = styled.button`
-  color: black;
-  background-color: #f5f5dc;
-  border: none;
-  border-radius: 10px;
-  padding: 11px 21px;
-  font-size: 1rem;
-  cursor: pointer;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 400;
-  width: 150px; /* Set a consistent width for buttons */
-  gap: 1rem;
-  
-  &:hover, &:focus {
-    transform: scale(1.02); /* Expand the button slightly on hover */
-    font-weight: 600;
-  }
-`;
-
-const AdminButton = styled.button`
+const StyledButton = styled.button`
   color: white;
-  background-color: #333;
+  background: linear-gradient(135deg, #ff9800, #ff5722);
   border: none;
-  border-radius: 10px;
-  padding: 11px 21px;
-  font-size: 1rem;
+  border-radius: 30px;
+  padding: 15px 25px;
+  font-size: 1.2rem;
   cursor: pointer;
   font-family: 'Quicksand', sans-serif;
-  font-weight: 400;
-  width: 150px;
-  
+  font-weight: 600;
+  width: 180px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
   &:hover, &:focus {
-    transform: scale(1.02);
-    font-weight: 600;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   }
 `;
 
@@ -172,11 +134,11 @@ const Home = () => {
         </ParallaxSection>
         
         <CenterTextButtonDiv>
-          <LeftCenterTextButton onClick={handleStudentLogin}>Student</LeftCenterTextButton>
-          <RightCenterTextButton onClick={handleTeacherLogin}>Teacher</RightCenterTextButton>
+          <StyledButton onClick={handleStudentLogin}>Student</StyledButton>
+          <StyledButton onClick={handleTeacherLogin}>Teacher</StyledButton>
         </CenterTextButtonDiv>
         
-        <AdminButton onClick={handleAdminLogin}>Admin</AdminButton>
+        <StyledButton onClick={handleAdminLogin}>Admin</StyledButton>
       </ContentContainer>
     </PageContainer>
   );
