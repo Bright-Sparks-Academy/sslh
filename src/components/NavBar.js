@@ -33,6 +33,17 @@ const NavLink = styled(Link)`
   }
 `;
 
+const HeaderLink = styled.a`
+  display: flex;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+  font-weight: ${props => props.$isActive ? 'bold' : 'normal'};
+  &:hover {
+    font-weight: bold;
+  }
+`
+
 const ProfileContainer = styled.div`
   position: relative;
 `;
@@ -128,7 +139,7 @@ const NavBar = ({ user }) => {
           <ProfileImage onClick={handleLogout}>Logout</ProfileImage>
         </ProfileContainer>
       ) : (
-        <LoginButton to="/login">Login</LoginButton>
+        <HeaderLink href="https://brightsparks.academy" target="_blank">Created by Bright Sparks Academy</HeaderLink>
       )}
     </NavBarContainer>
   );

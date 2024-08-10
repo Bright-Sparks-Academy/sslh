@@ -9,9 +9,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 const PageContainer = styled.div`
   font-family: 'Quicksand', sans-serif;
-  background: linear-gradient(135deg, #ffd900 0%, #f5b700 100%);
+  background: #ffd900;
   color: #333;
-  height: 200vh; /* For parallax effect */
+  height: 100vh; /* For parallax effect */
   overflow-x: hidden;
 `;
 
@@ -27,7 +27,7 @@ const ContentContainer = styled.div`
 const Heading = styled.h1`
   font-size: 3.5rem;
   font-weight: bold;
-  color: #333;
+  color: #000;
   text-align: center;
   margin-bottom: 1.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
