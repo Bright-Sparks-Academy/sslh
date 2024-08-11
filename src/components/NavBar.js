@@ -108,7 +108,7 @@ const NavBar = () => {
     <NavBarContainer>
       <NavLinks>
         <NavLink to="/" $isActive={location.pathname === '/'}>
-          <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
+          <img src={lightbulbIcon} alt="Home" style={{ width: '75px', height: '75px' }} />
         </NavLink>
         {userRole && (
           <>
