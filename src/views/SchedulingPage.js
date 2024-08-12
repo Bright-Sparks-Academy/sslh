@@ -1,4 +1,3 @@
-// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/SchedulingPage.js
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -14,7 +13,7 @@ const Container = styled.div`
 `;
 
 const LeftPanel = styled.div`
-  width: 25%;
+  width: 30%;
   padding: 20px;
   background-color: white;
   border-radius: 10px;
@@ -22,7 +21,7 @@ const LeftPanel = styled.div`
 `;
 
 const RightPanel = styled.div`
-  width: 70%;
+  width: 65%;
   padding: 20px;
   background-color: white;
   border-radius: 10px;
@@ -33,6 +32,7 @@ const Header = styled.h2`
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+  text-align: center;
 `;
 
 const Select = styled.select`
@@ -47,12 +47,14 @@ const Select = styled.select`
 const EventList = styled.ul`
   list-style: none;
   padding: 0;
+  margin: 0;
 `;
 
 const EventItem = styled.li`
   padding: 10px;
   border-bottom: 1px solid #ccc;
   margin-bottom: 10px;
+  font-size: 14px;
 `;
 
 const CalendarContainer = styled.div`
@@ -131,7 +133,7 @@ const SchedulingPage = () => {
         <EventList>
           {events.map((event, index) => (
             <EventItem key={index}>
-              <strong>Meeting {index + 1}:</strong> {event.name}
+              <strong>Meeting {index + 1}:</strong> {event.date} - {event.time}
               <br />
               <strong>Instructor:</strong> {event.instructor}
               <br />
@@ -144,8 +146,7 @@ const SchedulingPage = () => {
         <Header>Class Scheduling</Header>
         <CalendarContainer>
           <h2>July 2024</h2>
-          {/* Calendar component can be implemented or imported from a library */}
-          <p>Calendar here</p>
+          {/* Replace the text with an actual calendar component if available */}
         </CalendarContainer>
         <CalendlyScheduling /> {/* Add the CalendlyScheduling component here */}
         <ButtonContainer>

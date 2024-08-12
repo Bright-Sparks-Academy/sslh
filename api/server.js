@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { collection, addDoc, doc, getDoc,  getDocs, updateDoc, setDoc} from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc,  getDocs, updateDoc, setDoc, where} from 'firebase/firestore';
 import { db } from '../src/firebaseConfig.js';
 import { StudentPackage, NonStudentPackage } from '../src/packages.js';
 import { getCalendlyUser, listEventTypes, getSchedulingLink, setCalendlyAvailability} from './calendlyConfig.js';
@@ -26,6 +26,19 @@ app.use(cors({
   credentials: true, // Allow cookies to be sent with requests
 }));
 
+const preferences = {
+  language: "English",
+  allowNotifications: true,
+  darkMode: true,
+  allow2FA: true,
+  allowContactViaSMS: true,
+  brightness: 75,
+  textSize: 14,
+  micVolume: 80,
+  speakerVolume: 65
+};
+
+
 //admin endpoints 
 // Endpoint to fetch admin info
 app.get('/api/admin-info', async (req, res) => {
@@ -40,6 +53,7 @@ app.get('/api/admin-info', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch admin info' });
   }
 });
+
 
 // Endpoint to fetch instructors data
 app.get('/api/instructors', async (req, res) => {
@@ -142,7 +156,158 @@ app.post('/api/set-availability', async (req, res) => {
   }
 });
 
+// Endpoint to handle course requests (leave or change)
+app.post('/api/teacher/course-request', async (req, res) => {
+  const { teacherId, courseId, requestType } = req.body;  // 'requestType' can be 'leave' or 'change'
+  try {
+    await addDoc(collection(db, 'course-requests'), { teacherId, courseId, requestType });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to submit course request' });
+  }
+});
 
+// Endpoint to fetch the student gradebook for a specific class
+app.get('/api/teacher/gradebook', async (req, res) => {
+  const { classId } = req.query;
+  try {
+    const gradebookSnapshot = await getDocs(collection(db, 'gradebooks', classId, 'students'));
+    const gradebook = gradebookSnapshot.docs.map(doc => doc.data());
+    res.json(gradebook);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch gradebook' });
+  }
+});
+
+// Endpoint to fetch student post history
+app.get('/api/teacher/post-history', async (req, res) => {
+  const { studentId } = req.query;
+  try {
+    const postHistorySnapshot = await getDocs(collection(db, 'students', studentId, 'posts'));
+    const postHistory = postHistorySnapshot.docs.map(doc => doc.data());
+    res.json(postHistory);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch student post history' });
+  }
+});
+
+// Endpoint to fetch reported students
+app.get('/api/teacher/reported-students', async (req, res) => {
+  try {
+    const reportedStudentsSnapshot = await getDocs(collection(db, 'reported-students'));
+    const reportedStudents = reportedStudentsSnapshot.docs.map(doc => doc.data());
+    res.json(reportedStudents);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch reported students' });
+  }
+});
+
+// Example endpoint to send a message to the administrator
+app.post('/api/contact-admin', async (req, res) => {
+  const { teacherId, message } = req.body;
+  try {
+    await addDoc(collection(db, 'admin-messages'), { teacherId, message });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to send message to admin' });
+  }
+});
+
+// Endpoint to fetch course materials
+app.get('/api/course-materials', async (req, res) => {
+  try {
+    const courseMaterials = [
+      { id: 1, title: 'Course Material 1', description: 'Description of course material 1' },
+      { id: 2, title: 'Course Material 2', description: 'Description of course material 2' },
+      { id: 3, title: 'Course Material 3', description: 'Description of course material 3' }
+    ];
+    res.json(courseMaterials);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch course materials' });
+  }
+});
+
+// Example endpoint to fetch rules and agreements
+app.get('/api/rules-agreements', async (req, res) => {
+  try {
+    const rulesAgreements = await getDocs(collection(db, 'rules-agreements'));
+    res.json(rulesAgreements.docs.map(doc => doc.data()));
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch rules and agreements' });
+  }
+});
+
+// Fetch teacher preferences
+app.get('/api/teacher/preferences', async (req, res) => {
+  const { teacherId } = req.query;
+  try {
+    const preferencesDoc = await getDoc(doc(db, 'teachers', teacherId, 'preferences'));
+    if (preferencesDoc.exists()) {
+      res.json(preferencesDoc.data());
+    } else {
+      res.status(404).json({ error: 'Preferences not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch preferences' });
+  }
+});
+
+// Update teacher preferences
+app.put('/api/teacher/preferences', async (req, res) => {
+  const { teacherId, preferences } = req.body;
+  try {
+    await setDoc(doc(db, 'teachers', teacherId, 'preferences'), preferences);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update preferences' });
+  }
+});
+
+app.post('/api/meetings/schedule', async (req, res) => {
+  const { teacherId, studentId, date, startTime, endTime, reason } = req.body;
+  try {
+    const newMeeting = {
+      teacherId,
+      studentId,
+      date,
+      startTime,
+      endTime,
+      reason,
+      status: 'scheduled'
+    };
+    const docRef = await addDoc(collection(db, 'meetings'), newMeeting);
+    res.json({ success: true, id: docRef.id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to schedule meeting' });
+  }
+});
+
+app.put('/api/meetings/reschedule/:id', async (req, res) => {
+  const meetingId = req.params.id;
+  const { date, startTime, endTime, reason } = req.body;
+  try {
+    await updateDoc(doc(db, 'meetings', meetingId), {
+      date,
+      startTime,
+      endTime,
+      reason,
+      status: 'rescheduled'
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to reschedule meeting' });
+  }
+});
+
+app.delete('/api/meetings/cancel/:id', async (req, res) => {
+  const meetingId = req.params.id;
+  try {
+    await updateDoc(doc(db, 'meetings', meetingId), { status: 'canceled' });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to cancel meeting' });
+  }
+});
 
 
 app.get('/api/test-calendly', async (req, res) => {
@@ -153,6 +318,18 @@ app.get('/api/test-calendly', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch Calendly user' });
   }
 });
+
+app.get('/api/meetings', async (req, res) => {
+  const { teacherId } = req.query;
+  try {
+    const meetingsSnapshot = await getDocs(collection(db, 'meetings'), where('teacherId', '==', teacherId));
+    const meetings = meetingsSnapshot.docs.map(doc => doc.data());
+    res.json(meetings);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch meetings' });
+  }
+});
+
 
 app.get('/api/list-event-types', async (req, res) => {
   try {
