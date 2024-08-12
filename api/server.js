@@ -306,6 +306,100 @@ app.get('/api/course-materials', async (req, res) => {
   }
 });
 
+//Teacher edit page's endpoints: 
+//fetch teacher info
+app.get('/api/teachers/:id', async (req, res) => {
+  const teacherId = req.params.id;
+  try {
+      const teacherDoc = await getDoc(doc(db, 'teachers', teacherId));
+      if (teacherDoc.exists()) {
+          res.json(teacherDoc.data());
+      } else {
+          res.status(404).json({ error: 'Teacher not found' });
+      }
+  } catch (error) {
+      console.error('Error fetching teacher information:', error);
+      res.status(500).json({ error: 'Failed to fetch teacher information' });
+  }
+});
+
+// Update teacher information
+app.put('/api/teachers/:id', async (req, res) => {
+  const teacherId = req.params.id;
+  const updatedData = req.body;
+  try {
+      await updateDoc(doc(db, 'teachers', teacherId), updatedData);
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error updating teacher information:', error);
+      res.status(500).json({ error: 'Failed to update teacher information' });
+  }
+});
+
+// Fetch teacher's post history
+app.get('/api/teachers/:id/post-history', async (req, res) => {
+  const teacherId = req.params.id;
+  try {
+      const postHistorySnapshot = await getDocs(collection(db, 'teachers', teacherId, 'postHistory'));
+      const postHistory = postHistorySnapshot.docs.map(doc => doc.data());
+      res.json(postHistory);
+  } catch (error) {
+      console.error('Error fetching post history:', error);
+      res.status(500).json({ error: 'Failed to fetch post history' });
+  }
+});
+
+// Fetch teacher's communication history
+app.get('/api/teachers/:id/communication-history', async (req, res) => {
+  const teacherId = req.params.id;
+  try {
+      const communicationSnapshot = await getDocs(collection(db, 'teachers', teacherId, 'communicationHistory'));
+      const communicationHistory = communicationSnapshot.docs.map(doc => doc.data());
+      res.json(communicationHistory);
+  } catch (error) {
+      console.error('Error fetching communication history:', error);
+      res.status(500).json({ error: 'Failed to fetch communication history' });
+  }
+});
+
+// Fetch teacher's students
+app.get('/api/teachers/:id/students', async (req, res) => {
+  const teacherId = req.params.id;
+  try {
+      const studentsSnapshot = await getDocs(collection(db, 'teachers', teacherId, 'students'));
+      const students = studentsSnapshot.docs.map(doc => doc.data());
+      res.json(students);
+  } catch (error) {
+      console.error('Error fetching students:', error);
+      res.status(500).json({ error: 'Failed to fetch students' });
+  }
+});
+
+// Delete teacher account
+app.delete('/api/teachers/:id', async (req, res) => {
+  const teacherId = req.params.id;
+  try {
+      await deleteDoc(doc(db, 'teachers', teacherId));
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error deleting teacher account:', error);
+      res.status(500).json({ error: 'Failed to delete teacher account' });
+  }
+});
+
+// Report teacher account
+app.post('/api/teachers/:id/report', async (req, res) => {
+  const teacherId = req.params.id;
+  const issue = req.body.issue;
+  try {
+      await addDoc(collection(db, 'reports'), { teacherId, issue, reportedAt: new Date() });
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error reporting teacher account:', error);
+      res.status(500).json({ error: 'Failed to report teacher account' });
+  }
+});
+
 // Endpoint to fetch chatroom monitor data
 app.get('/api/chatroom-monitor', async (req, res) => {
   try {
