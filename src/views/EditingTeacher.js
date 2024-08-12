@@ -1,20 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// Main container for the entire page
-const EditTeacherContainer = styled.div`
+// Main Container
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background-color: #FFFFF0; /* Light cream background */
+  background-color: #FFFFF0;
   height: 100vh;
+  padding: 20px;
 `;
 
-// Header section with the teacher's name and profile picture
-const HeaderSection = styled.div`
-  text-align: center;
+// Header
+const Header = styled.h1`
+  font-size: 2rem;
   margin-bottom: 20px;
+`;
+
+const ProfileSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
 `;
 
 const ProfileImage = styled.div`
@@ -22,47 +29,46 @@ const ProfileImage = styled.div`
   height: 60px;
   background-color: #ddd;
   border-radius: 50%;
-  margin: 0 auto 10px;
+  margin-bottom: 10px;
 `;
 
 const TeacherName = styled.h2`
   font-size: 1.5rem;
-  margin-bottom: 5px;
+  text-align: center;
 `;
 
-// Container for all the sections
+// Sections Layout
 const SectionsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
 `;
 
-// Section styles
 const Section = styled.div`
-  background-color: #FFD700; /* Gold background */
-  padding: 20px;
+  background-color: #FFD700;
   border-radius: 10px;
+  padding: 20px;
   flex: 1;
   margin: 0 10px;
+  min-height: 500px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
 `;
 
-// Specific style for the Edit User Settings section
-const EditUserSettingsSection = styled(Section)`
+const WhiteSection = styled(Section)`
   background-color: #FFFFF0;
 `;
 
-// Account Information styles
+// Account Information Section
 const AccountInfo = styled.div`
-  font-size: 1rem;
-  color: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 `;
 
 const InfoItem = styled.p`
-  margin-bottom: 10px;
+  font-size: 1rem;
 `;
 
 const CalendlyLink = styled.a`
@@ -72,7 +78,6 @@ const CalendlyLink = styled.a`
   border-radius: 5px;
   color: #000;
   text-decoration: none;
-  margin-top: 10px;
 `;
 
 const EditIcon = styled.button`
@@ -80,71 +85,90 @@ const EditIcon = styled.button`
   border: none;
   cursor: pointer;
   margin-left: 10px;
-  font-size: 1.2rem;
+  font-size: 1rem;
 `;
 
-// Buttons at the bottom of the Account Information section
-const ButtonGroup = styled.div`
+const AdminOptions = styled.button`
+  background-color: #d3d3d3;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+`;
+
+const ReportAccount = styled.button`
+  background-color: #FF0000;
+  color: #FFF;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+  margin-bottom: 10px;
+`;
+
+const DeleteAccount = styled.button`
+  background-color: #FFD700;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+`;
+
+// User Activity Section
+const UserActivity = styled.div`
+  background-color: #D3D3D3;
+  padding: 15px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-`;
-
-const Button = styled.button`
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  background-color: ${props => props.bgColor || '#d3d3d3'};
-  color: ${props => props.color || '#000'};
-`;
-
-// User Activity styles
-const ActivitySection = styled.div`
-  background-color: #d3d3d3;
-  padding: 15px;
-  border-radius: 5px;
+  margin-bottom: 20px;
 `;
 
 const ActivityItem = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #D3D3D3;
+  border-radius: 5px;
 `;
 
-const ActivityLabel = styled.span`
-  flex: 1;
-`;
-
-const ActivityActions = styled.div`
-  display: flex;
-  gap: 5px;
-`;
-
-const ViewButton = styled(Button)`
+const ViewButton = styled.button`
   background-color: #000;
   color: #FFF;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 `;
 
-const ReportButton = styled(Button)`
+const ReportButton = styled.button`
   background-color: #FF0000;
   color: #FFF;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 `;
 
-// Student list style
-const StudentList = styled.div`
+// Students List Section
+const StudentsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 `;
 
 const StudentItem = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: #f5f5f5;
+  background-color: #FFF;
   padding: 10px;
   border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 `;
 
 const StudentInfo = styled.div`
@@ -158,23 +182,34 @@ const StudentActions = styled.div`
   gap: 5px;
 `;
 
-// Course section style
+// Course Section
 const CourseSection = styled.div`
-  background-color: #f5f5f5;
+  background-color: #F5F5F5;
   padding: 15px;
-  border-radius: 5px;
+  border-radius: 10px;
   text-align: center;
+  margin-top: auto;
+`;
+
+const CourseInfo = styled.div`
+  margin-bottom: 10px;
+`;
+
+const CourseViewButton = styled(ViewButton)`
+  background-color: #000;
 `;
 
 // Main Component
 const EditTeacher = () => {
   return (
-    <EditTeacherContainer>
-      <HeaderSection>
+    <Container>
+      <Header>Edit Teacher</Header>
+      <ProfileSection>
         <ProfileImage />
         <TeacherName>Teacher Name</TeacherName>
-      </HeaderSection>
+      </ProfileSection>
       <SectionsContainer>
+        {/* Left Section */}
         <Section>
           <AccountInfo>
             <InfoItem>User ID: {`{UserID}`}</InfoItem>
@@ -186,50 +221,51 @@ const EditTeacher = () => {
               <EditIcon>✏️</EditIcon>
             </InfoItem>
           </AccountInfo>
-          <ButtonGroup>
-            <Button bgColor="#d3d3d3">⚙️ Admin Options</Button>
-            <Button bgColor="#FF0000" color="#FFF">Report Account</Button>
-            <Button bgColor="#FFD700">Delete Account</Button>
-          </ButtonGroup>
+          <AdminOptions>⚙️ Admin Options</AdminOptions>
+          <ReportAccount>Report Account</ReportAccount>
+          <DeleteAccount>Delete Account</DeleteAccount>
         </Section>
 
-        <EditUserSettingsSection>
+        {/* Center Section */}
+        <WhiteSection>
           <h2>Edit User Settings</h2>
-        </EditUserSettingsSection>
+        </WhiteSection>
 
+        {/* Right Section */}
         <Section>
           <h2>User Activity</h2>
-          <ActivitySection>
+          <UserActivity>
             <ActivityItem>
-              <ActivityLabel>Recordings: 12</ActivityLabel>
-              <ActivityActions>
+              <span>Recordings: 12</span>
+              <div>
                 <ViewButton>View</ViewButton>
                 <ReportButton>Report</ReportButton>
-              </ActivityActions>
+              </div>
             </ActivityItem>
             <ActivityItem>
-              <ActivityLabel>Assignments: 11</ActivityLabel>
-              <ActivityActions>
+              <span>Assignments: 11</span>
+              <div>
                 <ViewButton>View</ViewButton>
                 <ReportButton>Report</ReportButton>
-              </ActivityActions>
+              </div>
             </ActivityItem>
             <ActivityItem>
-              <ActivityLabel>Online Meetings: 6</ActivityLabel>
-              <ActivityActions>
+              <span>Online Meetings: 6</span>
+              <div>
                 <ViewButton>View</ViewButton>
                 <ReportButton>Report</ReportButton>
-              </ActivityActions>
+              </div>
             </ActivityItem>
             <ActivityItem>
-              <ActivityLabel>Messages: 37</ActivityLabel>
-              <ActivityActions>
+              <span>Messages: 37</span>
+              <div>
                 <ViewButton>View</ViewButton>
                 <ReportButton>Report</ReportButton>
-              </ActivityActions>
+              </div>
             </ActivityItem>
-          </ActivitySection>
-          <StudentList>
+          </UserActivity>
+
+          <StudentsList>
             <StudentItem>
               <StudentInfo>
                 <div>Class: Java</div>
@@ -252,16 +288,17 @@ const EditTeacher = () => {
                 <ReportButton>Report</ReportButton>
               </StudentActions>
             </StudentItem>
-          </StudentList>
+          </StudentsList>
+
           <CourseSection>
-            <div>Course:</div>
-            <div>Total Students: 10</div>
-            <div>Total Instructors: 5</div>
-            <ViewButton>View</ViewButton>
+            <CourseInfo>Course:</CourseInfo>
+            <CourseInfo>Total Students: 10</CourseInfo>
+            <CourseInfo>Total Instructors: 5</CourseInfo>
+            <CourseViewButton>View</CourseViewButton>
           </CourseSection>
         </Section>
       </SectionsContainer>
-    </EditTeacherContainer>
+    </Container>
   );
 };
 
