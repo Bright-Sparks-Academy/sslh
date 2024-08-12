@@ -400,6 +400,130 @@ app.post('/api/teachers/:id/report', async (req, res) => {
   }
 });
 
+// Student edit page for admin 
+
+// Fetch student information
+app.get('/api/students/:id', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+      const studentDoc = await getDoc(doc(db, 'students', studentId));
+      if (studentDoc.exists()) {
+          res.json(studentDoc.data());
+      } else {
+          res.status(404).json({ error: 'Student not found' });
+      }
+  } catch (error) {
+      console.error('Error fetching student information:', error);
+      res.status(500).json({ error: 'Failed to fetch student information' });
+  }
+});
+
+// Update student information
+app.put('/api/students/:id', async (req, res) => {
+  const studentId = req.params.id;
+  const updatedData = req.body;
+  try {
+      await updateDoc(doc(db, 'students', studentId), updatedData);
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error updating student information:', error);
+      res.status(500).json({ error: 'Failed to update student information' });
+  }
+});
+
+// Fetch student's assignment history
+app.get('/api/students/:id/assignments', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+      const assignmentsSnapshot = await getDocs(collection(db, 'students', studentId, 'assignments'));
+      const assignments = assignmentsSnapshot.docs.map(doc => doc.data());
+      res.json(assignments);
+  } catch (error) {
+      console.error('Error fetching assignment history:', error);
+      res.status(500).json({ error: 'Failed to fetch assignment history' });
+  }
+});
+
+// Fetch student's communication history
+app.get('/api/students/:id/communications', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+      const communicationsSnapshot = await getDocs(collection(db, 'students', studentId, 'communications'));
+      const communications = communicationsSnapshot.docs.map(doc => doc.data());
+      res.json(communications);
+  } catch (error) {
+      console.error('Error fetching communication history:', error);
+      res.status(500).json({ error: 'Failed to fetch communication history' });
+  }
+});
+
+// Fetch student's courses
+app.get('/api/students/:id/courses', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+      const coursesSnapshot = await getDocs(collection(db, 'students', studentId, 'courses'));
+      const courses = coursesSnapshot.docs.map(doc => doc.data());
+      res.json(courses);
+  } catch (error) {
+      console.error('Error fetching courses:', error);
+      res.status(500).json({ error: 'Failed to fetch courses' });
+  }
+});
+
+// Fetch instructor for a specific student
+app.get('/api/students/:id/instructor', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+      const instructorDoc = await getDoc(doc(db, 'students', studentId, 'instructor'));
+      if (instructorDoc.exists()) {
+          res.json(instructorDoc.data());
+      } else {
+          res.status(404).json({ error: 'Instructor not found' });
+      }
+  } catch (error) {
+      console.error('Error fetching instructor:', error);
+      res.status(500).json({ error: 'Failed to fetch instructor' });
+  }
+});
+
+// Delete student account
+app.delete('/api/students/:id', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+      await deleteDoc(doc(db, 'students', studentId));
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error deleting student account:', error);
+      res.status(500).json({ error: 'Failed to delete student account' });
+  }
+});
+
+// Report student account
+app.post('/api/students/:id/report', async (req, res) => {
+  const studentId = req.params.id;
+  const issue = req.body.issue;
+  try {
+      await addDoc(collection(db, 'reports'), { studentId, issue, reportedAt: new Date() });
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error reporting student account:', error);
+      res.status(500).json({ error: 'Failed to report student account' });
+  }
+});
+
+//Report instructor
+app.post('/api/students/:id/report-instructor', async (req, res) => {
+  const studentId = req.params.id;
+  const issue = req.body.issue;
+  try {
+      await addDoc(collection(db, 'instructorReports'), { studentId, issue, reportedAt: new Date() });
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error reporting instructor:', error);
+      res.status(500).json({ error: 'Failed to report instructor' });
+  }
+});
+
 // Endpoint to fetch chatroom monitor data
 app.get('/api/chatroom-monitor', async (req, res) => {
   try {
