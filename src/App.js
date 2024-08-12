@@ -12,6 +12,7 @@ import StudentLogin from './views/StudentLogin.js';
 import TeacherLogin from './views/TeacherLogin.js';
 import AdminLogin from './views/AdminLogin.js';
 import SchedulingPage from './views/SchedulingPage.js';
+import ConnectionsPage from './views/Connections.js';
 import { auth } from './firebaseConfig.js';
 import { getRole } from '././components/roles.js'; // Adjust the path as needed
 import GlobalStyle from './GlobalStyles.js';
@@ -71,6 +72,7 @@ const App = () => {
               <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
               <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
               <Route path="/scheduling" element={<PrivateRoute><SchedulingPage /></PrivateRoute>} />
+              <Route path="/connections" element={<PrivateRoute><ConnectionsPage /></PrivateRoute>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>
