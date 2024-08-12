@@ -39,6 +39,25 @@ const preferences = {
 };
 
 
+// Correctly using the Firestore collection function with the modular SDK
+(async () => {
+  try {
+    const testCollection = collection(db, 'test');  // Correct way to reference a collection
+    const testDocRef = doc(testCollection, 'doc1');
+    
+    // Set a document in the collection
+    await setDoc(testDocRef, { field: 'value' });
+    console.log('Document successfully written!');
+    
+    // Get all documents in the collection
+    const querySnapshot = await getDocs(testCollection);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+    });
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
 //admin endpoints 
 // Endpoint to fetch admin info
 app.get('/api/admin-info', async (req, res) => {
@@ -54,6 +73,203 @@ app.get('/api/admin-info', async (req, res) => {
   }
 });
 
+//admin moderation page
+console.log(db); // Should not be undefined
+// Get all users from Firestore
+const getAllUsersFromDatabase = async () => {
+  try {
+    const usersCollectionRef = collection(db, 'users'); // Access the 'users' collection
+    const usersSnapshot = await getDocs(usersCollectionRef); // Get all documents in the collection
+    
+    if (usersSnapshot.empty) {
+      console.log('No users found.');
+      return [];
+    }
+
+    const users = usersSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    console.log('Users fetched:', users);
+    return users;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw new Error('Failed to fetch users');
+  }
+};
+
+// Get details for a specific user
+const getUserDetails = async (userId) => {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    if (userDoc.exists()) {
+      return userDoc.data();
+    } else {
+      throw new Error('User not found');
+    }
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    throw new Error('Failed to fetch user details');
+  }
+};
+
+// Update user details
+const updateUserDetails = async (userId, updatedData) => {
+  try {
+    await updateDoc(doc(db, 'users', userId), updatedData);
+    console.log('User updated successfully');
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw new Error('Failed to update user details');
+  }
+};
+
+// Delete or deactivate a user
+const deleteUser = async (userId) => {
+  try {
+    await deleteDoc(doc(db, 'users', userId));
+    console.log('User deleted successfully');
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw new Error('Failed to delete user');
+  }
+};
+
+// Report a user
+const reportUser = async (userId, issue) => {
+  try {
+    await addDoc(collection(db, 'reports'), { userId, issue, reportedAt: new Date() });
+    console.log('User reported successfully');
+  } catch (error) {
+    console.error('Error reporting user:', error);
+    throw new Error('Failed to report user');
+  }
+};
+
+// Get recordings for a specific user
+const getUserRecordings = async (userId) => {
+  try {
+    const recordingsSnapshot = await getDocs(collection(db, 'users', userId, 'recordings'));
+    return recordingsSnapshot.docs.map(doc => doc.data());
+  } catch (error) {
+    console.error('Error fetching user recordings:', error);
+    throw new Error('Failed to fetch user recordings');
+  }
+};
+
+// Get messages for a specific user
+const getUserMessages = async (userId) => {
+  try {
+    const messagesSnapshot = await getDocs(collection(db, 'users', userId, 'messages'));
+    return messagesSnapshot.docs.map(doc => doc.data());
+  } catch (error) {
+    console.error('Error fetching user messages:', error);
+    throw new Error('Failed to fetch user messages');
+  }
+};
+
+// Report specific content
+const reportContent = async (contentId, issue) => {
+  try {
+    await addDoc(collection(db, 'contentReports'), { contentId, issue, reportedAt: new Date() });
+    console.log('Content reported successfully');
+  } catch (error) {
+    console.error('Error reporting content:', error);
+    throw new Error('Failed to report content');
+  }
+};
+
+// Fetch all users
+app.get('/api/moderation/users', async (req, res) => {
+  try {
+    const users = await getAllUsersFromDatabase(); // Changed from accounts to users
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+// Fetch specific user details
+app.get('/api/moderation/user/:id', async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await getUserDetails(userId); // Changed from account to user
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch user details' });
+  }
+});
+
+// Update specific user details
+app.put('/api/moderation/user/:id', async (req, res) => {
+  const userId = req.params.id;
+  const updatedData = req.body;
+  try {
+    await updateUserDetails(userId, updatedData); // Changed from account to user
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update user details' });
+  }
+});
+
+// Delete or deactivate a user
+app.delete('/api/moderation/user/:id', async (req, res) => {
+  const userId = req.params.id;
+  try {
+    await deleteUser(userId); // Changed from account to user
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+});
+
+// Report a user
+app.post('/api/moderation/user/:id/report', async (req, res) => {
+  const userId = req.params.id;
+  const issue = req.body.issue;
+  try {
+    await reportUser(userId, issue); // Changed from account to user
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to report user' });
+  }
+});
+
+// Fetch all recordings for a user
+app.get('/api/moderation/user/:id/recordings', async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const recordings = await getUserRecordings(userId); // Changed from account to user
+    res.json(recordings);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch recordings' });
+  }
+});
+
+// Fetch all messages for a user
+app.get('/api/moderation/user/:id/messages', async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const messages = await getUserMessages(userId); // Changed from account to user
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+// Report specific content (recording or message)
+app.post('/api/moderation/content/:contentId/report', async (req, res) => {
+  const contentId = req.params.contentId;
+  const issue = req.body.issue;
+  try {
+    await reportContent(contentId, issue);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to report content' });
+  }
+});
 
 // Endpoint to fetch instructors data
 app.get('/api/instructors', async (req, res) => {

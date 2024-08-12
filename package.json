@@ -24,7 +24,7 @@
     "emoji-picker-react": "^4.11.1",
     "express": "^4.19.2",
     "faker": "^6.6.6",
-    "firebase": "^10.12.2",
+    "firebase": "^10.12.5",
     "firebase-admin": "^12.3.1",
     "gsap": "^3.12.5",
     "lucide-react": "^0.396.0",
