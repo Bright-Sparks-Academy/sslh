@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { collection, addDoc, doc, getDoc,  getDocs, updateDoc, setDoc, where} from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc,  getDocs, updateDoc, setDoc, where, deleteDoc} from 'firebase/firestore';
 import { db } from '../src/firebaseConfig.js';
 import { StudentPackage, NonStudentPackage } from '../src/packages.js';
 import { getCalendlyUser, listEventTypes, getSchedulingLink, setCalendlyAvailability} from './calendlyConfig.js';
@@ -707,6 +707,103 @@ app.post('/api/submit-diagnostic', async (req, res) => {
   } catch (error) {
     console.error('Error generating analysis:', error);
     res.status(500).json({ error: 'Failed to generate analysis' });
+  }
+});
+
+
+//admin connection page endpoints
+
+// Endpoint to fetch current connections
+app.get('/api/connections', async (req, res) => {
+  try {
+      const connectionsSnapshot = await getDocs(collection(db, 'connections'));
+      const connections = connectionsSnapshot.docs.map(doc => doc.data());
+      res.json(connections);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch connections' });
+  }
+});
+
+// Endpoint to fetch managed students and teachers
+app.get('/api/managed-entities', async (req, res) => {
+  try {
+      const managedStudentsSnapshot = await getDocs(collection(db, 'students'));
+      const managedTeachersSnapshot = await getDocs(collection(db, 'teachers'));
+      
+      const managedStudents = managedStudentsSnapshot.docs.map(doc => doc.data());
+      const managedTeachers = managedTeachersSnapshot.docs.map(doc => doc.data());
+      
+      res.json({ students: managedStudents, teachers: managedTeachers });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch managed entities' });
+  }
+});
+
+// Endpoint to establish a new connection
+app.post('/api/connections', async (req, res) => {
+  const { instructorId, studentId } = req.body;
+  try {
+      const newConnection = {
+          instructorId,
+          studentId,
+          status: 'Pending', // Initially set to pending
+          createdAt: new Date().toISOString()
+      };
+      const docRef = await addDoc(collection(db, 'connections'), newConnection);
+      res.json({ success: true, id: docRef.id });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to establish connection' });
+  }
+});
+
+// Endpoint to update an existing connection
+app.put('/api/connections/:id', async (req, res) => {
+  const connectionId = req.params.id;
+  const { status } = req.body;
+  try {
+      await updateDoc(doc(db, 'connections', connectionId), { status });
+      res.json({ success: true });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to update connection' });
+  }
+});
+
+// Endpoint to terminate an active connection
+app.put('/api/connections/:id/terminate', async (req, res) => {
+  const connectionId = req.params.id;
+  try {
+      await updateDoc(doc(db, 'connections', connectionId), { status: 'Terminated' });
+      res.json({ success: true });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to terminate connection' });
+  }
+});
+
+// Endpoint to remove a terminated connection
+app.delete('/api/connections/:id', async (req, res) => {
+  const connectionId = req.params.id;
+  try {
+      await deleteDoc(doc(db, 'connections', connectionId));
+      res.json({ success: true });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to remove connection' });
+  }
+});
+
+// Endpoint to report a problem with a connection
+app.post('/api/connections/:id/report', async (req, res) => {
+  const connectionId = req.params.id;
+  const { issue } = req.body;
+  try {
+      const report = {
+          connectionId,
+          issue,
+          reportedAt: new Date().toISOString()
+      };
+      await addDoc(collection(db, 'connection-reports'), report);
+      res.json({ success: true });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to report connection issue' });
   }
 });
 
