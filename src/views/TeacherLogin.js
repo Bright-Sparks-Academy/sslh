@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc, setDoc} from 'firebase/firestore';
 import { auth, db } from './../firebaseConfig.js'; // Adjust path as necessary
 import logo from '../assets/lightbulb.png';
 
@@ -91,7 +91,9 @@ const TeacherLogin = () => {
       // Authenticate the user
       const userCredential = await signInWithEmailAndPassword(auth, username, password);
       const user = userCredential.user;
-  
+      
+      //await setDoc(doc(db, 'users', user.uid), preferences);
+      
       // Fetch user role from Firestore
       const userDocRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);

@@ -583,8 +583,11 @@ app.post('/api/set-availability', async (req, res) => {
   try {
     const schedulingUrl = await getSchedulingLink(eventName);
     // Assume we have a function to set availability on Calendly
-    await setCalendlyAvailability(schedulingUrl, startDate, endDate);
-    res.json({ success: true });
+    await axios.post(schedulingUrl, {
+      start: startDate, 
+      end: endDate
+    });
+    res.json({ success: true});
   } catch (error) {
     res.status(500).json({ error: 'Failed to set availability on Calendly' });
   }
