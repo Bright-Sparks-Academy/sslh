@@ -112,6 +112,7 @@ const NavBar = () => {
         </NavLink>
         {userRole && (
           <>
+            <NavLink to="/teacher-dashboard" $isActive={location.pathname === '/teacher-dashboard'}>Dashboard</NavLink>
             <NavLink to="/student/dashboard" $isActive={location.pathname === '/student/dashboard'}>Dashboard</NavLink>
             <NavLink to="/messaging" $isActive={location.pathname === '/messaging'}>Messaging</NavLink>
             <NavLink to="/homework" $isActive={location.pathname === '/homework'}>Homework</NavLink>

@@ -1,780 +1,599 @@
-import React from 'react';
+import React, { useState, useRef, useEffect, useContext } from "react";
+import styled, { createGlobalStyle } from "styled-components";
+import userIcon from "../assets/user.png";
+import { auth, storage, db } from "../firebaseConfig.js";
+import { updateProfile } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext.js";
+import Modal from '../components/Modal.js';
+import { roles, getRole } from '../roles.js';
 
-const styles = {
-  pageContainer: {
-    marginTop: '70px',
-    padding: '1rem',
-    fontFamily: "'Gotham', 'Quicksand', sans-serif",
-    backgroundColor: '#FFFFEF',
-    color: '#000000',
-  },
-  header: {
-    textAlign: 'center',
-    fontSize: '23px',
-    fontFamily: "'Quicksand', sans-serif",
-    position: 'absolute',
-    top: '15px',
-    left: '270px',
-  },
-  subheader: {
-    fontSize: '13px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '50px',
-    left: '30px',
-  },
-  accountInfoText: {
-    position: 'absolute',
-    top: '15px',
-    left: '19px',
-    width: '235px',
-    height: '30px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '16px',
-  },
-  accountInfo: {
-    position: 'absolute',
-    top: '275px',
-    left: '6px',
-    backgroundColor: '#F7D703',
-    width: '315px',
-    height: '254px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  accountInfoDetails: {
-    margin: '0',
-    padding: '2px 35px',
-    paddingLeft: '70px',
-    paddingTop: '50',
-    fontSize: '20px',
-  },
-  editInfoBtn: {
-    backgroundColor: '#D9D9D9',
-    borderRadius: '15px',
-    width: '123px',
-    height: '32px',
-    position: 'absolute',
-    top: '197px',
-    left: '14px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  editInfoText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  deleteAccountBtn: {
-    backgroundColor: '#ff0000',
-    borderRadius: '15px',
-    width: '159px',
-    height: '32px',
-    position: 'absolute',
-    top: '197px',
-    left: '142px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  deleteAccountText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  classSchedule: {
-    position: 'absolute',
-    top: '275px',
-    left: '329px',
-    backgroundColor: '#F7D703',
-    width: '352px',
-    height: '674px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  classScheduleText: {
-    position: 'absolute',
-    top: '15px',
-    left: '12px',
-    width: '170px',
-    height: '30px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '16px',
-  },
-  classScheduleWhite: {
-    position: 'absolute',
-    top: '58px',
-    left: '7px',
-    backgroundColor: '#ffffff',
-    width: '338px',
-    height: '602px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  meeting1: {
-    position: 'absolute',
-    top: '16px',
-    left: '15px',
-    backgroundColor: '#D9D9D9',
-    width: '318px',
-    height: '109px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  meeting2: {
-    position: 'absolute',
-    top: '127px',
-    left: '15px',
-    backgroundColor: '#D9D9D9',
-    width: '318px',
-    height: '109px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  meeting3: {
-    position: 'absolute',
-    top: '241px',
-    left: '15px',
-    backgroundColor: '#D9D9D9',
-    width: '318px',
-    height: '109px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  meeting4: {
-    position: 'absolute',
-    top: '355px',
-    left: '15px',
-    backgroundColor: '#D9D9D9',
-    width: '318px',
-    height: '109px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  meetingDetails: {
-    margin: '0',
-    padding: '2px 35px',
-    paddingLeft: '70px',
-    fontSize: '20px',
-    top: '6px',
-    left: '15px',
-    width: '276px',
-    height: '100px',
-  },
-  scheduleMeetingBtn: {
-    backgroundColor: '#16A10A',
-    borderRadius: '15px',
-    width: '319px',
-    height: '30px',
-    position: 'absolute',
-    top: '482px',
-    left: '9px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scheduleMeetingText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  rescheduleMeetingBtn: {
-    backgroundColor: '#FFD900',
-    borderRadius: '15px',
-    width: '319px',
-    height: '30px',
-    position: 'absolute',
-    top: '520px',
-    left: '9px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rescheduleMeetingText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  cancelMeetingBtn: {
-    backgroundColor: '#E70F0F',
-    borderRadius: '15px',
-    width: '319px',
-    height: '30px',
-    position: 'absolute',
-    top: '558px',
-    left: '9px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cancelMeetingText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  messages: {
-    position: 'absolute',
-    top: '536px',
-    left: '6px',
-    backgroundColor: '#FFD900',
-    width: '315px',
-    height: '328px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  messagesText: {
-    position: 'absolute',
-    top: '11px',
-    left: '12px',
-    width: '112px',
-    height: '30px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '16px',
-  },
-  messages1: {
-    position: 'absolute',
-    top: '50px',
-    left: '22px',
-    backgroundColor: '#D9D9D9',
-    width: '282px',
-    height: '123px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  messages2: {
-    position: 'absolute',
-    top: '182px',
-    left: '22px',
-    backgroundColor: '#D9D9D9',
-    width: '282px',
-    height: '123px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  numMessages: {
-    position: 'absolute',
-    top: '9px',
-    left: '25.24px',
-    width: '32px',
-    height: '50px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '40px',
-  },
-  newMessages: {
-    position: 'absolute',
-    top: '61px',
-    left: '-0.18px',
-    width: '76px',
-    height: '40px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '16px',
-  },
-  messagesdetails: {
-    margin: '0',
-    padding: '2px 35px',
-    paddingLeft: '70px',
-    fontSize: '18px',
-  },
-  viewMessagesBtn: {
-    backgroundColor: '#000000',
-    borderRadius: '15px',
-    width: '157.95px',
-    height: '31px',
-    position: 'absolute',
-    top: '85px',
-    left: '82.94px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  viewMessagesText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  reportProblem: {
-    backgroundColor: '#FF0000',
-    borderRadius: '25px',
-    width: '315px',
-    height: '35px',
-    position: 'absolute',
-    top: '874px',
-    left: '6px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reportProblemText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  options: {
-    backgroundColor: '#D9D9D9',
-    borderRadius: '25px',
-    width: '315px',
-    height: '35px',
-    position: 'absolute',
-    top: '914px',
-    left: '6px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  optionsText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  courseOptions: {
-    position: 'absolute',
-    top: '275px',
-    left: '689px',
-    backgroundColor: '#F7D703',
-    width: '409px',
-    height: '674px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  courseOptionsText: {
-    position: 'absolute',
-    top: '18px',
-    left: '23px',
-    width: '175px',
-    height: '30px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '16px',
-  },
-  courseOptionsClass: {
-    position: 'absolute',
-    top: '64px',
-    left: '34px',
-    width: '120px',
-    height: '25px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '20px',
-  },
-  leaveRequest: {
-    backgroundColor: '#FF0000',
-    borderRadius: '25px',
-    width: '209px',
-    height: '27px',
-    position: 'absolute',
-    top: '105px',
-    left: '100px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  leaveRequestText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  changeRequest: {
-    backgroundColor: '#D9D9D9',
-    borderRadius: '25px',
-    width: '209px',
-    height: '27px',
-    position: 'absolute',
-    top: '143px',
-    left: '100px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  changeRequestText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  courseOptionsStudent: {
-    position: 'absolute',
-    top: '225px',
-    left: '34px',
-    width: '159px',
-    height: '25px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '20px',
-  },
-  gradebookBtn: {
-    backgroundColor: '#D9D9D9',
-    borderRadius: '25px',
-    width: '347px',
-    height: '30px',
-    position: 'absolute',
-    top: '261px',
-    left: '31px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  gradebookText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  studentPostHistoryBtn: {
-    backgroundColor: '#000000',
-    borderRadius: '25px',
-    width: '347px',
-    height: '30px',
-    position: 'absolute',
-    top: '298px',
-    left: '31px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  studentPostHistoryText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  reportedStudentsBtn: {
-    backgroundColor: '#FF0000',
-    borderRadius: '25px',
-    width: '347px',
-    height: '30px',
-    position: 'absolute',
-    top: '335px',
-    left: '31px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reportedStudentsText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  adminBtn: {
-    backgroundColor: '#FFFFB0',
-    borderRadius: '25px',
-    width: '347px',
-    height: '30px',
-    position: 'absolute',
-    top: '437px',
-    left: '31px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  adminText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  courseMaterialsBtn: {
-    backgroundColor: '#D9D9D9',
-    borderRadius: '25px',
-    width: '347px',
-    height: '30px',
-    position: 'absolute',
-    top: '477px',
-    left: '31px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  courseMaterialsText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  rulesBtn: {
-    backgroundColor: '#D9D9D9',
-    borderRadius: '25px',
-    width: '347px',
-    height: '30px',
-    position: 'absolute',
-    top: '517px',
-    left: '31px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rulesText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  postHistoryBtn: {
-    backgroundColor: '#000000',
-    borderRadius: '25px',
-    width: '347px',
-    height: '30px',
-    position: 'absolute',
-    top: '557px',
-    left: '31px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  postHistoryText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  preferences: {
-    position: 'absolute',
-    top: '275px',
-    left: '1106px',
-    backgroundColor: '#F7D703',
-    width: '400px',
-    height: '674px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    boxSizing: 'border-box',
-  },
-  preferencesText: {
-    position: 'absolute',
-    top: '17px',
-    left: '13px',
-    width: '137px',
-    height: '30px',
-    borderRadius: '25px',
-    paddingTop: '5px',
-    color: 'black',
-    fontSize: '16px',
-  },
-  languageBtn: {
-    backgroundColor: '#D9D9D9',
-    borderRadius: '25px',
-    width: '187px',
-    height: '32px',
-    position: 'absolute',
-    top: '57px',
-    left: '203px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  languageBtnText: { // Renamed from languageText to languageBtnText
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  restoreDefaultsBtn: {
-    backgroundColor: '#FF0000',
-    borderRadius: '25px',
-    width: '255px',
-    height: '38px',
-    position: 'absolute',
-    top: '535px',
-    left: '65px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  restoreDefaultsText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '20px',
-  },
-  preferencesItem: {
-    margin: '0',
-    padding: '2px 35px',
-    paddingLeft: '70px',
-    fontSize: '20px',
-    top: '60px',
-    left: '20px',
-  },
+const DashboardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffef;
+  width: 99.4vw;
+  height: 125vh;
+`;
+
+const ProfileTitle = styled.header`
+  color: black;
+  width: 19rem;
+  height: 4rem;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 8rem;
+`;
+
+const ProfilePicture = styled.img`
+  width: 3rem;
+  height: 3rem;
+  margin-top: 0.2rem;
+`;
+
+const ProfileName = styled.div`
+  display: flex;
+  width: 11rem;
+  height: 2rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+`;
+
+const ProfileInfoContainer = styled.div`
+  display: grid;
+  height: 34rem;
+  width: 95%;
+  grid-template: 1fr 1.2fr 0.3fr / 1fr 1.1fr 1.3fr 1.2fr;
+  gap: 10px;
+`;
+
+const ProfileItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-radius: 2rem;
+  background-color: #ffd900;
+`;
+
+const SectionHeader = styled.header`
+  width: 13rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 1rem 0 0 1.5rem;
+`;
+
+const SectionContent = styled.div`
+  height: 100%;
+  width: 100%;
+`;
+
+const RedButton = styled.button`
+  background-color: red;
+  height: 3rem;
+  width: 8rem;
+  font-family: "Quicksand", sans-serif;
+  color: white;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  border-radius: 1rem;
+  cursor: pointer;
+  margin: 0 0 3rem 6.3rem;
+`;
+
+const AccountInfo = styled.div`
+  width: 15rem;
+  height: 1.7rem;
+  margin-left: 2rem;
+  font-weight: 500;
+`;
+
+const DoubleButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 3rem;
+`;
+
+const ScrollContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+  direction: rtl;
+  border-radius: 1rem;
+  margin-left: 1rem;
+  width: 95%;
+  height: 11rem;
+`;
+
+const Message = styled.div`
+  display: flex;
+  height: 6rem;
+  width: 14rem;
+  border-radius: 1rem;
+  direction: ltr;
+  background-color: lightgray;
+`;
+
+const NumMessagesContainer = styled.div`
+  display: flex;
+  width: 30%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const NumMessages = styled.h1`
+  margin: 0;
+`;
+
+const NewMessages = styled.h5`
+  margin: 0;
+  text-align: center;
+`;
+
+const MessageInfoContainer = styled.div`
+  display: flex;
+  width: 70%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const MessageInfo = styled.div`
+  font-weight: 550;
+  font-size: 0.9rem;
+`;
+
+const ViewButton = styled.button`
+  background-color: black;
+  color: white;
+  height: 1.5rem;
+  width: 8rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+`;
+
+const WhiteBackground = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 0.5rem;
+  background-color: white;
+  border-radius: 1rem;
+  height: 30rem;
+  width: 95%;
+`;
+
+const Meeting = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 16rem;
+  height: 5.5rem;
+  padding-top: 0.5rem;
+  border-radius: 1rem;
+  background-color: lightgray;
+`;
+
+const MeetingInfo = styled.span`
+  direction: ltr;
+  margin-left: 1rem;
+`;
+
+const ScheduleButton = styled.button`
+  height: 1.7rem;
+  width: 93%;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  border-radius: 1rem;
+  margin-top: 0.2rem;
+  cursor: pointer;
+`;
+
+const CourseOptionsButton = styled.button`
+  background-color: lightgray;
+  height: 1.8rem;
+  width: 12rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  border-radius: 1rem;
+  margin: 0.2rem;
+  cursor: pointer;
+`;
+
+const LongCourseOptionsButton = styled.button`
+  height: 1.8rem;
+  width: 20rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  border-radius: 1rem;
+  margin: 0.4rem;
+  cursor: pointer;
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 28rem;
+  width: 100%;
+`;
+
+const StudentOptionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 10rem;
+`;
+
+const AccountSectionContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  height: 1rem;
+  padding: 0.8rem;
+  margin: 0 1rem 0 1rem;
+  font-weight: 500;
+`;
+
+const ChangeInfoButton = styled.button`
+  background-color: lightgray;
+  height: 1.5rem;
+  width: 10rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  margin-left: 3rem;
+  border-radius: 1rem;
+  cursor: pointer;
+`;
+
+const CourseSelectionContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+
+const CheckBox = styled.input`
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-right: 5rem;
+  accent-color: black;
+`;
+
+const SliderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 11rem;
+  height: 0.9rem;
+  margin-top: 0.3rem;
+`;
+
+const SliderRangeContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.8rem;
+`;
+
+const SliderStyles = createGlobalStyle`
+  .slider {
+    -webkit-appearance: none;
+    background: #C5A800;
+    border-radius: 3rem;
+    outline: none;
+    opacity: 0.7;
+    width: 11rem;
+    height: .4rem;
+    accent-color: black;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance : none;
+    background : black;
+    height : .4rem;
+    width : 1.7rem;
+    border-radius: 1rem;
+  }
+`;
+
+
+const TeacherDashboard = () => {
+  const { user, setUser } = useContext(UserContext);
+  const [fullName, setFullName] = useState("");
+  const [bio, setBio] = useState("");
+  const fileInputRef = useRef(null); // Reference to file input
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.displayName || "");
+    }
+  }, [user]);
+
+  function removeEmail(array, stringToRemove) {
+    return array.filter(item => item !== stringToRemove);
+  }
+
+  const deleteAccount = () => {
+    const role = getRole(user.email);
+    if (role === "member") roles.members = removeEmail(roles.members, user.email);
+    if (role === "admin") roles.admins = removeEmail(roles.admins, user.email);
+    if (role === "teacher") roles.teachers = removeEmail(roles.teachers, user.email);
+    else if (roles.students.includes(user.email)) {
+      roles.students = removeEmail(roles.students, user.email);
+    }
+    handleLogout();
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (file && user) {
+      try {
+        const storageRef = ref(storage, `avatars/${user.uid}`);
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        await updateProfile(user, { photoURL: downloadURL });
+        setUser({ ...user, photoURL: downloadURL });
+      } catch (error) {
+        console.error("Error uploading avatar:", error);
+        alert("Failed to upload avatar. Please try again.");
+      }
+    }
+  };
+
+  const handleSave = async () => {
+    if (user) {
+      try {
+        await updateProfile(user, { displayName: fullName });
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, { bio });
+        setUser({ ...user, displayName: fullName });
+        alert("Profile updated successfully!");
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("Failed to update profile. Please try again.");
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      alert("Failed to sign out. Please try again.");
+    }
+  };
+
+  // if (!user) return <div>Loading...</div>;
+
+  return (
+    <DashboardContainer>
+      <SliderStyles />
+      <ProfileTitle>Teacher Dashboard</ProfileTitle>
+      <ProfilePicture src={userIcon} alt="Profile" />
+      <ProfileName>{fullName}</ProfileName>
+
+      <ProfileInfoContainer>
+        <ProfileItem>
+          <SectionHeader>Account Information</SectionHeader>
+          <AccountInfo>User ID: </AccountInfo>
+          <AccountInfo>Class: </AccountInfo>
+          <AccountInfo>Last Joined: </AccountInfo>
+          <AccountInfo>Email: </AccountInfo>
+          <DoubleButtonContainer>
+            <CourseOptionsButton style={{ width: '8rem' }}>
+              Edit Info
+            </CourseOptionsButton>
+            <CourseOptionsButton style={{ width: '8rem', backgroundColor: 'red', color: 'white' }}>
+              Delete Account
+            </CourseOptionsButton>
+          </DoubleButtonContainer>
+        </ProfileItem>
+
+        <ProfileItem style={{gridRow: 'span 3'}}>
+          <SectionHeader>Class Schedule</SectionHeader>
+          <WhiteBackground>
+            <ScrollContainer style={{ height: '22rem', margin: '1rem 1rem ' }}>
+              <Meeting>
+                <MeetingInfo>Meeting 1: 7/3/24</MeetingInfo>
+                <MeetingInfo>Time Frame: 1:00 PM - 2:30 PM</MeetingInfo>
+                <MeetingInfo>Student: Student A</MeetingInfo>
+                <MeetingInfo>Reason: Tutoring</MeetingInfo>
+              </Meeting>
+            </ScrollContainer>
+            <ScheduleButton style={{ backgroundColor: '#16a10a' }}>
+              Schedule a New Meeting
+            </ScheduleButton>
+            <ScheduleButton style={{ backgroundColor: '#ffd900' }}>
+              Reschedule a Meeting
+            </ScheduleButton>
+            <ScheduleButton style={{ backgroundColor: 'red', color: 'white' }}>
+              Cancel a Meeting
+            </ScheduleButton>
+          </WhiteBackground>
+        </ProfileItem>
+
+        <ProfileItem style={{gridRow: 'span 3'}}>
+          <SectionHeader>Course Options</SectionHeader>
+          <SectionContent>
+            <CourseSelectionContainer>
+              <AccountSectionContainer style={{ marginLeft: ".7rem" }}>
+                Class: Java 1
+              </AccountSectionContainer>
+            </CourseSelectionContainer>
+            <ButtonsContainer>
+              <CourseOptionsButton style={{
+                  backgroundColor: "red",
+                  color: "white",
+                }}>Request to Leave
+              </CourseOptionsButton>
+              <CourseOptionsButton>Request a Change</CourseOptionsButton>
+              <AccountSectionContainer style={{ marginLeft: "4rem", width: "100%" }}>
+                Student Options:
+              </AccountSectionContainer>
+              <StudentOptionsContainer>
+                <CourseOptionsButton style={{ width: "20rem" }}>
+                  View Student Grade Book
+                </CourseOptionsButton>
+                <CourseOptionsButton style={{ backgroundColor: "black", color: "white", width: "20rem" }}>
+                  View Student Post History
+                </CourseOptionsButton>
+                <CourseOptionsButton style={{ backgroundColor: "red", color: "white", width: "20rem", }}>
+                  View Status on Reported Students
+                </CourseOptionsButton>
+              </StudentOptionsContainer>
+              <LongCourseOptionsButton style={{ backgroundColor: "#FFFFB0" }}>
+                Contact Administrator
+              </LongCourseOptionsButton>
+              <LongCourseOptionsButton style={{ backgroundColor: "lightgray" }}>
+                View Course Materials
+              </LongCourseOptionsButton>
+              <LongCourseOptionsButton style={{ backgroundColor: "lightgray" }}>
+                View Rules and Agreements
+              </LongCourseOptionsButton>
+              <LongCourseOptionsButton style={{ backgroundColor: "black", color: "white" }}>
+                View Post History
+              </LongCourseOptionsButton>
+            </ButtonsContainer>
+          </SectionContent>
+        </ProfileItem>
+
+        <ProfileItem style={{gridRow: 'span 3'}}>
+          <SectionHeader>Preferences</SectionHeader>
+          <SectionContent>
+            <AccountSectionContainer>
+              <div>Language: </div>
+              <ChangeInfoButton>Change Language</ChangeInfoButton>
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Allow Notifications: </div>
+              <CheckBox type="checkbox" />
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Dark Mode: </div>
+              <CheckBox type="checkbox" />
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Allow 2FA: </div>
+              <CheckBox type="checkbox" />
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Allow Contact Via SMS: </div>
+              <CheckBox type="checkbox" />
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Brightness: </div>
+              <SliderContainer>
+                <input className="slider" type="range" min="0" max="100" />
+                <SliderRangeContainer>
+                  <span>0</span>
+                  <span>100</span>
+                </SliderRangeContainer>
+              </SliderContainer>
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Text Size: </div>
+              <SliderContainer>
+                <input className="slider" type="range" min="0" max="100" />
+                <SliderRangeContainer>
+                  <span>0</span>
+                  <span>100</span>
+                </SliderRangeContainer>
+              </SliderContainer>
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Mic Volume: </div>
+              <SliderContainer>
+                <input className="slider" type="range" min="0" max="100" />
+                <SliderRangeContainer>
+                  <span>0</span>
+                  <span>100</span>
+                </SliderRangeContainer>
+              </SliderContainer>
+            </AccountSectionContainer>
+
+            <AccountSectionContainer>
+              <div>Speaker Volume: </div>
+              <SliderContainer>
+                <input className="slider" type="range" min="0" max="100" />
+                <SliderRangeContainer>
+                  <span>0</span>
+                  <span>100</span>
+                </SliderRangeContainer>
+              </SliderContainer>
+            </AccountSectionContainer>
+          </SectionContent>
+          <RedButton
+            style={{ width: "10rem", height: "2.5rem" }}
+            onClick={() => {
+              setFullName('');
+              setBio('');
+              // Reset other preferences if needed
+            }}
+          >
+            Restore Defaults
+          </RedButton>
+        </ProfileItem>
+
+        <ProfileItem>
+          <SectionHeader>Messages</SectionHeader>
+          <ScrollContainer>
+            <Message>
+              <NumMessagesContainer>
+                <NumMessages>11</NumMessages>
+                <NewMessages>New Messages</NewMessages>
+              </NumMessagesContainer>
+              <MessageInfoContainer>
+                <MessageInfo>Class: Java</MessageInfo>
+                <MessageInfo>Student: Student A</MessageInfo>
+                <ViewButton>View Messages</ViewButton>
+              </MessageInfoContainer>
+            </Message>
+          </ScrollContainer>
+        </ProfileItem>
+
+        <ProfileItem style={{   backgroundColor: '#ffffef' }}>
+          <CourseOptionsButton style={{ width: '100%', backgroundColor: 'red', color: 'white' }}>
+            Report a Problem
+          </CourseOptionsButton>
+          <CourseOptionsButton style={{ width: '100%' }}>
+            Options
+          </CourseOptionsButton>
+        </ProfileItem>
+      </ProfileInfoContainer>
+    </DashboardContainer>
+  );
 };
-
-const TeacherDashboard = () => (
-  <div style={styles.pageContainer}>
-    <div style={styles.header}>Teacher Dashboard</div>
-    <div style={styles.subheader}>Teacher Name's Profile</div>
-
-    <div style={styles.accountInfo}>
-      <div style={styles.accountInfoText}>Account Information</div>
-      <div style={styles.accountInfoDetails}>Teacher Name</div>
-      <div style={styles.accountInfoDetails}>Class: Java</div>
-      <div style={styles.accountInfoDetails}>Last Joined: 5/24/24</div>
-      <div style={styles.accountInfoDetails}>Email: example@site.com</div>
-
-      <div style={styles.editInfoBtn}>
-        <div style={styles.editInfoText}>Edit Info</div>
-      </div>
-
-      <div style={styles.deleteAccountBtn}>
-        <div style={styles.deleteAccountText}>Delete Account</div>
-      </div>
-    </div>
-
-    <div style={styles.classSchedule}>
-      <div style={styles.classScheduleText}>Class Schedule</div>
-      <div style={styles.classScheduleWhite}>
-        <div style={styles.meeting1}>
-          <div style={styles.meetingDetails}>Meeting 1: 7/3/24</div>
-          <div style={styles.meetingDetails}>Time Frame: 1:00 PM - 2:30 PM</div>
-          <div style={styles.meetingDetails}>Instructor: Student A</div>
-          <div style={styles.meetingDetails}>Reason: Tutoring</div>
-        </div>
-
-        <div style={styles.meeting2}>
-          <div style={styles.meetingDetails}>Meeting 2: 7/3/24</div>
-          <div style={styles.meetingDetails}>Time Frame: 1:00 PM - 2:30 PM</div>
-          <div style={styles.meetingDetails}>Instructor: Student A</div>
-          <div style={styles.meetingDetails}>Reason: Scheduling Formalities</div>
-        </div>
-
-        <div style={styles.meeting3}>
-          <div style={styles.meetingDetails}>Meeting 3: 7/3/24</div>
-          <div style={styles.meetingDetails}>Time Frame: 1:00 PM - 2:30 PM</div>
-          <div style={styles.meetingDetails}>Instructor: Student A</div>
-          <div style={styles.meetingDetails}>Reason: Homework Review</div>
-        </div>
-
-        <div style={styles.meeting4}>
-          <div style={styles.meetingDetails}>Meeting 4: 7/3/24</div>
-          <div style={styles.meetingDetails}>Time Frame: 1:00 PM - 2:30 PM</div>
-          <div style={styles.meetingDetails}>Instructor: Student A</div>
-          <div style={styles.meetingDetails}>Reason: Tutoring</div>
-        </div>
-
-        <div style={styles.scheduleMeetingBtn}>
-          <div style={styles.scheduleMeetingText}>Schedule a new Meeting</div>
-        </div>
-
-        <div style={styles.rescheduleMeetingBtn}>
-          <div style={styles.rescheduleMeetingText}>Reschedule a meeting</div>
-        </div>
-
-        <div style={styles.cancelMeetingBtn}>
-          <div style={styles.cancelMeetingText}>Cancel a meeting</div>
-        </div>
-      </div>
-    </div>
-
-    <div style={styles.messages}>
-      <div style={styles.messagesText}>Messages</div>
-      <div style={styles.messages1}>
-        <div style={styles.numMessages}>11</div>
-        <div style={styles.newMessages}>New Messages</div>
-        <div style={styles.messagesdetails}>Class: Java</div>
-        <div style={styles.messagesdetails}>Student: Student A</div>
-
-        <div style={styles.viewMessagesBtn}>
-          <div style={styles.viewMessagesText}>View Messages</div>
-        </div>
-      </div>
-
-      <div style={styles.messages2}>
-        <div style={styles.numMessages}>8</div>
-        <div style={styles.newMessages}>New Messages</div>
-        <div style={styles.messagesdetails}>Class: Java</div>
-        <div style={styles.messagesdetails}>Student: Student B</div>
-
-        <div style={styles.viewMessagesBtn}>
-          <div style={styles.viewMessagesText}>View Messages</div>
-        </div>
-      </div>
-    </div>
-
-    <div style={styles.reportProblem}>
-      <div style={styles.reportProblemText}>Report a problem</div>
-    </div>
-
-    <div style={styles.options}>
-      <div style={styles.optionsText}>Options</div>
-    </div>
-
-    <div style={styles.courseOptions}>
-      <div style={styles.courseOptionsText}>Course Options</div>
-
-      <div style={styles.courseOptionsClass}>Class: Java 1</div>
-
-      <div style={styles.leaveRequest}>
-        <div style={styles.leaveRequestText}>Request to Leave</div>
-      </div>
-
-      <div style={styles.changeRequest}>
-        <div style={styles.changeRequestText}>Request a Change</div>
-      </div>
-
-      <div style={styles.courseOptionsStudent}>Student Options:</div>
-
-      <div style={styles.gradebookBtn}>
-        <div style={styles.gradebookText}>View Student Gradebook</div>
-      </div>
-
-      <div style={styles.studentPostHistoryBtn}>
-        <div style={styles.studentPostHistoryText}>View Student Post History</div>
-      </div>
-
-      <div style={styles.reportedStudentsBtn}>
-        <div style={styles.reportedStudentsText}>View Status on Reported Students</div>
-      </div>
-
-      <div style={styles.adminBtn}>
-        <div style={styles.adminText}>Contact Administrator</div>
-      </div>
-
-      <div style={styles.courseMaterialsBtn}>
-        <div style={styles.courseMaterialsText}>View Course Materials</div>
-      </div>
-
-      <div style={styles.rulesBtn}>
-        <div style={styles.rulesText}>View Rules and Agreements</div>
-      </div>
-
-      <div style={styles.postHistoryBtn}>
-        <div style={styles.postHistoryText}>View Post History</div>
-      </div>
-    </div>
-
-    <div style={styles.preferences}>
-      <div style={styles.preferencesText}>Preferences</div>
-
-      <div style={styles.preferencesItem}>Language: English</div>
-      <div style={styles.preferencesItem}>Allow Notifications</div>
-      <div style={styles.preferencesItem}>Dark Mode</div>
-      <div style={styles.preferencesItem}>Allow 2FA</div>
-      <div style={styles.preferencesItem}>Allow Contact via SMS</div>
-      <div style={styles.preferencesItem}>Brightness:</div>
-      <div style={styles.preferencesItem}>Text Size:</div>
-      <div style={styles.preferencesItem}>Mic Volume:</div>
-      <div style={styles.preferencesItem}>Speaker Volume:</div>
-
-      <div style={styles.languageBtn}>
-        <div style={styles.languageBtnText}>View Post History</div>
-      </div>
-
-      <div style={styles.restoreDefaultsBtn}>
-        <div style={styles.restoreDefaultsText}>View Post History</div>
-      </div>
-    </div>
-  </div>
-);
 
 export default TeacherDashboard;
