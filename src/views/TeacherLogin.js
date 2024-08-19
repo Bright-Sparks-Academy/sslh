@@ -92,8 +92,6 @@ const TeacherLogin = () => {
       const userCredential = await signInWithEmailAndPassword(auth, username, password);
       const user = userCredential.user;
       
-      //await setDoc(doc(db, 'users', user.uid), preferences);
-      
       // Fetch user role from Firestore
       const userDocRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);

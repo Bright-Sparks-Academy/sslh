@@ -747,7 +747,7 @@ app.delete('/api/meetings/cancel/:id', async (req, res) => {
 });
 
 
-app.get('/api/test-calendly', async (req, res) => {
+app.get('/api/test-cal', async (req, res) => {
   try {
     const userData = await getCalendlyUser();
     res.json(userData);
