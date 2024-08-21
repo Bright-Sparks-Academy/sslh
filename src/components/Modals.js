@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "./Modal.css";
-import styled from "styled-components";  // Removed `createGlobalStyle`
+import styled from "styled-components"; 
 
 const ChangeInfoButton = styled.button`
   background-color: lightgray;
@@ -17,7 +17,7 @@ const ChangeInfoButton = styled.button`
 const CloseButton = styled.button`
   background-color: lightgray;
   height: 1.5rem;
-  width: 5rem;
+  width: 4rem;
   font-family: "Quicksand", sans-serif;
   font-size: 95%;
   font-weight: 500;
@@ -26,8 +26,21 @@ const CloseButton = styled.button`
   cursor: pointer;
 `;
 
-// Function that creates a modal for entering either username/password for now.
-const Modal = ({ field, textField }) => {
+const CourseOptionsButton = styled.button`
+  background-color: lightgray;
+  height: 1.8rem;
+  width: 8rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  border-radius: 1rem;
+  margin: 0.2rem;
+  cursor: pointer;
+`;
+
+// Function that creates a modal for entering information, generally account info.
+export const Modal = ({ field, textField }) => {
     const [clickModal, setClickModal] = useState(false);
     
     // Changes the state of clicking on the modal.
@@ -54,4 +67,27 @@ const Modal = ({ field, textField }) => {
     );
 }
 
-export default Modal;
+export const EditInfo = ({children}) => {
+    const [clickModal, setClickModal] = useState(false);
+    const toggleModal = () => setClickModal(!clickModal);
+
+    return (
+        <>
+            <CourseOptionsButton onClick={toggleModal} className="btn-modal">
+                Edit Info
+            </CourseOptionsButton>
+            {clickModal && 
+                <div className="modal">
+                    <div className="overlay">
+                        <div className="modal-content">
+                            <h1>Edit Information</h1>
+                            <h4>Please change the information you want to change below.</h4>
+                            {children}
+                            <CloseButton className="close-modal" onClick={toggleModal}>Close</CloseButton>
+                        </div>
+                    </div>
+                </div>
+            }
+        </>
+    );
+}

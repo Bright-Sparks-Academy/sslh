@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.js";
-import Modal from '../components/Modal.js';
+import { Modal } from '../components/Modals.js';
 import { roles, getRole } from '../roles.js';
 
 const ProfileContainer = styled.div`

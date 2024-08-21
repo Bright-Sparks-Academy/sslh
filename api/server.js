@@ -9,7 +9,7 @@ import axios from 'axios';
 import { collection, addDoc, doc, getDoc,  getDocs, updateDoc, setDoc, where, deleteDoc} from 'firebase/firestore';
 import { db } from '../src/firebaseConfig.js';
 import { StudentPackage, NonStudentPackage } from '../src/packages.js';
-import { getCalendlyUser, listEventTypes, getSchedulingLink, setCalendlyAvailability} from './calendlyConfig.js';
+import { getCalendlyUser, listEventTypes, getSchedulingLink, setCalendlyAvailability} from './calConfig.js';
 
 // Load environment variables from .env file
 dotenv.config();

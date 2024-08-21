@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import lightbulbIcon from '../assets/lightbulb.png';
 import { auth, db } from './../firebaseConfig.js';
 import { doc, getDoc } from 'firebase/firestore';
+import MenuButton from '../assets/menuButton.png';
 
 const NavBarContainer = styled.nav`
   position: fixed;
@@ -39,8 +40,8 @@ const ProfileContainer = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   cursor: pointer;
 `;
@@ -51,11 +52,38 @@ const HeaderLink = styled.a`
   font-weight: bold;
 `;
 
+
+const ProfileDropdown = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  display: ${props => props.isOpen ? 'block' : 'none'};
+`;
+
+const DropdownItem = styled(Link)`
+  display: block;
+  padding: 5px 10px;
+  color: #000;
+  text-decoration: none;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
 const NavBar = () => {
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -86,7 +114,8 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      navigate('/login');
+      setUserRole(null);
+      navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -104,6 +133,30 @@ const NavBar = () => {
     }
   }, [userRole, loading, navigate, location.pathname]);
 
+  //Function that renders a dashboard navigation link to the appropriate dashboard for
+  //the role, or no link if the user has no role.
+  const DashboardNavLink = () => {
+    if (userRole === "Teacher"){
+      return (
+      <>
+      <NavLink to="/teacher-dashboard" $isActive={location.pathname === '/teacher-dashboard'}>Dashboard</NavLink>
+      </>
+      );
+    }else if (userRole === "Student"){
+      return (
+        <>
+        <NavLink to="/student-dashboard" $isActive={location.pathname === '/student-dashboard'}>Dashboard</NavLink>
+        </>
+        );
+    }else if (userRole === "Admin"){
+      return (
+        <>
+        <NavLink to="/admin-dashboard" $isActive={location.pathname === '/admin-dashboard'}>Dashboard</NavLink>
+        </>
+        );
+    }
+  };
+
   return (
     <NavBarContainer>
       <NavLinks>
@@ -112,8 +165,7 @@ const NavBar = () => {
         </NavLink>
         {userRole && (
           <>
-            <NavLink to="/teacher-dashboard" $isActive={location.pathname === '/teacher-dashboard'}>Dashboard</NavLink>
-            <NavLink to="/student/dashboard" $isActive={location.pathname === '/student/dashboard'}>Dashboard</NavLink>
+            <DashboardNavLink/>
             <NavLink to="/messaging" $isActive={location.pathname === '/messaging'}>Messaging</NavLink>
             <NavLink to="/homework" $isActive={location.pathname === '/homework'}>Homework</NavLink>
             <NavLink to="/recordings-page" $isActive={location.pathname === '/recordings-page'}>Recordings</NavLink>
@@ -124,7 +176,12 @@ const NavBar = () => {
       </NavLinks>
       {auth.currentUser ? (
         <ProfileContainer>
-          <ProfileImage src={auth.currentUser.photoURL} alt="Profile" onClick={handleLogout} />
+          <ProfileImage src={MenuButton} alt="Profile" onClick={toggleDropdown} />
+          <ProfileDropdown isOpen={isDropdownOpen}>
+            
+            <DropdownItem to="/settings">Settings</DropdownItem>
+            <DropdownItem as="button" onClick={handleLogout}>Logout</DropdownItem>
+          </ProfileDropdown>
         </ProfileContainer>
       ) : (
         <HeaderLink href="https://brightsparks.academy" target="_blank">Created by Bright Sparks Academy</HeaderLink>

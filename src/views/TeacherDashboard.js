@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.js";
-import Modal from '../components/Modal.js';
+import {EditInfo} from '../components/Modals.js';
 import { roles, getRole } from '../roles.js';
 
 const DashboardContainer = styled.div`
@@ -267,6 +267,19 @@ const ChangeInfoButton = styled.button`
   cursor: pointer;
 `;
 
+const UpdateButton = styled.button`
+  background-color: lightgray;
+  height: 1.5rem;
+  width: 5rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  margin-left: 3rem;
+  border-radius: 1rem;
+  cursor: pointer;
+`;
+
 const CourseSelectionContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -318,17 +331,51 @@ const SliderStyles = createGlobalStyle`
   }
 `;
 
+const UpdateInfoForm = styled.form `
+  display: flex; 
+  gap: 5px;
+`;
+
+const ButtonsDiv = styled.div `
+  display: flex; 
+  flex-direction: column; 
+  gap: 5px;
+`;
+
+const TextFieldsDiv = styled.div `
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px;
+`;
+
 
 const TeacherDashboard = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser} = useContext(UserContext);
   const [fullName, setFullName] = useState("");
+  const [className, setClassName] = useState("Java 1");
   const [bio, setBio] = useState("");
+
+  function formatCreationTime(creationTime) {
+    const date = new Date(creationTime);
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      timeZoneName: 'short'
+    };
+    return date.toLocaleDateString('en-US', options);
+  }
+  const [lastJoined, setLastJoined] = useState(formatCreationTime(user.metadata.creationTime));
   const fileInputRef = useRef(null); // Reference to file input
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      setFullName(user.displayName || "");
+      if (user.displayName) setFullName(user.displayName || "");
+      else setFullName('Guest' || "");
     }
   }, [user]);
 
@@ -388,6 +435,39 @@ const TeacherDashboard = () => {
     }
   };
 
+  //Functions for updating the userID, email, and class of the teacher.
+  const updateUserID = async (newUserID) => {
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        ID: newUserID //Check firestore for that!
+      });
+      user.uid = newUserID; //Ask nimai what to do for this, idrk what to do.
+      document.querySelector('input[name="userID"]').value = ''; 
+      console.log('User ID updated successfully');
+    } catch (error) {
+      console.error('Error updating user id:', error);
+      throw new Error('Failed to update user id');
+    }
+  };
+
+  const updateClass = (newClass) => {
+    setClassName(newClass); //Check to see if that is in firebase so that I can update that to.
+  };
+
+  const updateEmail = async (newEmail) => {
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        Email: newEmail //Check firestore for that!
+      });
+      user.email = newEmail; //Ask nimai what to do for this, idrk what to do.
+      document.querySelector('input[name="email"]').value = '';
+      console.log('Email updated successfully');
+    } catch (error) {
+      console.error('Error updating email:', error);
+      throw new Error('Failed to update email');
+    }
+  };
+
   // if (!user) return <div>Loading...</div>;
 
   return (
@@ -400,15 +480,35 @@ const TeacherDashboard = () => {
       <ProfileInfoContainer>
         <ProfileItem>
           <SectionHeader>Account Information</SectionHeader>
-          <AccountInfo>User ID: </AccountInfo>
-          <AccountInfo>Class: </AccountInfo>
-          <AccountInfo>Last Joined: </AccountInfo>
-          <AccountInfo>Email: </AccountInfo>
+          <AccountInfo>User ID: {user.uid} </AccountInfo>
+          <AccountInfo>Class: {className}</AccountInfo>
+          <AccountInfo>Last Joined: {lastJoined}</AccountInfo>
+          <AccountInfo>Email: {user.email}</AccountInfo>
           <DoubleButtonContainer>
-            <CourseOptionsButton style={{ width: '8rem' }}>
-              Edit Info
-            </CourseOptionsButton>
-            <CourseOptionsButton style={{ width: '8rem', backgroundColor: 'red', color: 'white' }}>
+            <EditInfo>
+              <UpdateInfoForm>
+                <TextFieldsDiv>
+                  <div>
+                    <label htmlFor="userID">User ID: </label>
+                    <input type ="text" name = "userID" className = "form-control" placeholder = "enter your new user id"/>
+                  </div>
+                  <div>
+                    <label htmlFor="class">Class: </label>
+                    <input type ="text" name = "class" className = "form-control" placeholder = "enter a new class"/>
+                  </div>
+                  <div>
+                    <label htmlFor="email">Email: </label>
+                    <input type ="text" name = "email" className = "form-control" placeholder = "enter your new email"/>
+                  </div>
+                </TextFieldsDiv>
+                  <ButtonsDiv>
+                    <UpdateButton>Update</UpdateButton>
+                    <UpdateButton>Update</UpdateButton>
+                    <UpdateButton>Update</UpdateButton>
+                  </ButtonsDiv>  
+              </UpdateInfoForm>
+            </EditInfo>
+            <CourseOptionsButton style={{ width: '8rem', backgroundColor: 'red', color: 'white' }} onClick = {deleteAccount}>
               Delete Account
             </CourseOptionsButton>
           </DoubleButtonContainer>
@@ -442,7 +542,7 @@ const TeacherDashboard = () => {
           <SectionContent>
             <CourseSelectionContainer>
               <AccountSectionContainer style={{ marginLeft: ".7rem" }}>
-                Class: Java 1
+                Class: {className}
               </AccountSectionContainer>
             </CourseSelectionContainer>
             <ButtonsContainer>
