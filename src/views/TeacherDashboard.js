@@ -48,7 +48,7 @@ const ProfileInfoContainer = styled.div`
   display: grid;
   height: 34rem;
   width: 95%;
-  grid-template: 1fr 0.6fr 0.3fr / 1fr 1.1fr 1.2fr 1.2fr;
+  grid-template: 1fr 0.6fr 0.1fr / 1fr 1.1fr 1.2fr 1.2fr;
   gap: 10px;
 `;
 
@@ -468,7 +468,7 @@ const TeacherDashboard = () => {
     }
   };
 
-  // if (!user) return <div>Loading...</div>;
+  if (!user) return <div>Loading...</div>;
 
   return (
     <DashboardContainer>
@@ -484,31 +484,8 @@ const TeacherDashboard = () => {
           <AccountInfo>Class: {className}</AccountInfo>
           <AccountInfo>Last Joined: {lastJoined}</AccountInfo>
           <AccountInfo>Email: {user.email}</AccountInfo>
-          <DoubleButtonContainer>
-            <EditInfo>
-              <UpdateInfoForm>
-                <TextFieldsDiv>
-                  <div>
-                    <label htmlFor="userID">User ID: </label>
-                    <input type ="text" name = "userID" className = "form-control" placeholder = "enter your new user id"/>
-                  </div>
-                  <div>
-                    <label htmlFor="class">Class: </label>
-                    <input type ="text" name = "class" className = "form-control" placeholder = "enter a new class"/>
-                  </div>
-                  <div>
-                    <label htmlFor="email">Email: </label>
-                    <input type ="text" name = "email" className = "form-control" placeholder = "enter your new email"/>
-                  </div>
-                </TextFieldsDiv>
-                  <ButtonsDiv>
-                    <UpdateButton>Update</UpdateButton>
-                    <UpdateButton>Update</UpdateButton>
-                    <UpdateButton>Update</UpdateButton>
-                  </ButtonsDiv>  
-              </UpdateInfoForm>
-            </EditInfo>
-            <CourseOptionsButton style={{ width: '8rem', backgroundColor: 'red', color: 'white' }} onClick = {deleteAccount}>
+          <DoubleButtonContainer style={{ marginTop: '2rem' }}>
+            <CourseOptionsButton style={{ width: '8rem', backgroundColor: 'red', color: 'white' }}>
               Delete Account
             </CourseOptionsButton>
           </DoubleButtonContainer>
@@ -686,9 +663,6 @@ const TeacherDashboard = () => {
         <ProfileItem style={{   backgroundColor: '#ffffef' }}>
           <CourseOptionsButton style={{ width: '100%', backgroundColor: 'red', color: 'white' }}>
             Report a Problem
-          </CourseOptionsButton>
-          <CourseOptionsButton style={{ width: '100%' }}>
-            Options
           </CourseOptionsButton>
         </ProfileItem>
       </ProfileInfoContainer>
