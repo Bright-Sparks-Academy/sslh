@@ -124,7 +124,7 @@ const AdminLogin = () => {
     <PageContainer>
       <Card>
         <Logo src={logo} alt="Lightbulb Logo" />
-        <Heading>Student Login</Heading>
+        <Heading>Admin Login</Heading>
         <InputFieldDiv>
           <Input
             type="email"
