@@ -48,7 +48,7 @@ const ProfileInfoContainer = styled.div`
   display: grid;
   height: 34rem;
   width: 95%;
-  grid-template: 1fr 0.6fr 0.1fr / 1fr 1.1fr 1.2fr 1.2fr;
+  grid-template: 1fr 0.6fr 0.3fr / 1fr 1.1fr 1.2fr 1.2fr;
   gap: 10px;
 `;
 
@@ -98,6 +98,7 @@ const DoubleButtonContainer = styled.div`
   justify-content: space-around;
   width: 100%;
   height: 3rem;
+  margin-top: 0.8rem;
 `;
 
 const ScrollContainer = styled.div`
@@ -481,10 +482,13 @@ const TeacherDashboard = () => {
         <ProfileItem>
           <SectionHeader>Account Information</SectionHeader>
           <AccountInfo>User ID: {user.uid} </AccountInfo>
-          <AccountInfo>Class: {className}</AccountInfo>
+          <AccountInfo style={{ marginTop: '1.3rem' }}>Class: {className}</AccountInfo>
           <AccountInfo>Last Joined: {lastJoined}</AccountInfo>
-          <AccountInfo>Email: {user.email}</AccountInfo>
-          <DoubleButtonContainer style={{ marginTop: '2rem' }}>
+          <AccountInfo style={{ marginTop: '1.3rem' }}>Email: {user.email}</AccountInfo>
+          <DoubleButtonContainer>
+            <CourseOptionsButton style={{ width: '8rem' }}>
+              Coming Soon
+            </CourseOptionsButton>
             <CourseOptionsButton style={{ width: '8rem', backgroundColor: 'red', color: 'white' }}>
               Delete Account
             </CourseOptionsButton>
@@ -663,6 +667,9 @@ const TeacherDashboard = () => {
         <ProfileItem style={{   backgroundColor: '#ffffef' }}>
           <CourseOptionsButton style={{ width: '100%', backgroundColor: 'red', color: 'white' }}>
             Report a Problem
+          </CourseOptionsButton>
+          <CourseOptionsButton style={{ width: '100%' }}>
+            Coming Soon
           </CourseOptionsButton>
         </ProfileItem>
       </ProfileInfoContainer>
