@@ -481,10 +481,10 @@ const TeacherDashboard = () => {
       <ProfileInfoContainer>
         <ProfileItem>
           <SectionHeader>Account Information</SectionHeader>
-          <AccountInfo>User ID: {user.uid} aksue739k2mz0IsH6829PwKLfaw6 </AccountInfo>
-          <AccountInfo style={{ marginTop: '1.3rem' }}>Class: {className} Java 1</AccountInfo>
-          <AccountInfo>Last Joined: {lastJoined} August 10, 2024 At 11:23:08 AM PDT</AccountInfo>
-          <AccountInfo style={{ marginTop: '1.3rem' }}>Email: Linmatthew2007@gmail.com{user.email}</AccountInfo>
+          <AccountInfo>User ID: {user.uid} </AccountInfo>
+          <AccountInfo style={{ marginTop: '1.3rem' }}>Class: {className}</AccountInfo>
+          <AccountInfo>Last Joined: {lastJoined}</AccountInfo>
+          <AccountInfo style={{ marginTop: '1.3rem' }}>Email: {user.email}</AccountInfo>
           <DoubleButtonContainer>
             <CourseOptionsButton style={{ width: '8rem' }}>
               Coming Soon
