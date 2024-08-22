@@ -14,6 +14,7 @@ const NavBarContainer = styled.nav`
   color: #FFD900;
   display: flex;
   justify-content: space-between;
+  align-items: center; /* Align items horizontally on the same line */
   padding: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -22,6 +23,7 @@ const NavBarContainer = styled.nav`
 const NavLinks = styled.div`
   display: flex;
   gap: 1rem;
+  align-items: center;
 `;
 
 const NavLink = styled(Link)`
@@ -40,10 +42,10 @@ const ProfileContainer = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
   cursor: pointer;
+  transform: translateY(5px); /* Move the button down slightly */
+  width: 35px;
+  height: 35px;
 `;
 
 const HeaderLink = styled.a`
@@ -153,7 +155,7 @@ const NavBar = () => {
       </NavLinks>
       {auth.currentUser ? (
         <ProfileContainer>
-          <ProfileImage src={MenuButton} alt="Profile" onClick={toggleDropdown} />
+          <ProfileImage src={MenuButton} alt="Profile" style={{ width: '35px', height: '35px' }} onClick={toggleDropdown} />
           <ProfileDropdown isOpen={isDropdownOpen}>
             <DropdownItem to="/settings">Settings</DropdownItem>
             <DropdownItem as="button" onClick={handleLogout}>Logout</DropdownItem>
