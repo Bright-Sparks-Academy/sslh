@@ -75,7 +75,6 @@ const DropdownItem = styled(Link)`
 
 const NavBar = () => {
   const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -99,11 +98,7 @@ const NavBar = () => {
           }
         } catch (error) {
           console.error('Error fetching user role:', error);
-        } finally {
-          setLoading(false);
         }
-      } else {
-        setLoading(false);
       }
     };
 
