@@ -17,7 +17,6 @@ import EditingTeacher from './views/EditingTeacher.js';
 import AdminProfile from './views/AdminProfile.js';
 import EditingStudent from './views/EditingStudent.js';
 import Moderation from './views/Moderation.js';
-import SessionViewer from './views/SessionViewer.js';
 import { auth } from './firebaseConfig.js';
 import { getRole } from '././components/roles.js'; // Adjust the path as needed
 import GlobalStyle from './GlobalStyles.js';
@@ -82,7 +81,6 @@ const App = () => {
               <Route path="/admin-profile" element={<AdminProfile/> } />
               <Route path="/admin-editing-student" element={<EditingStudent/> } />
               <Route path="/moderation" element={<Moderation/> } />
-              <Route path="/teacher-session-viewer" element={<SessionViewer/> } />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>

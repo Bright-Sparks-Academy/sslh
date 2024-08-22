@@ -52,7 +52,6 @@ const HeaderLink = styled.a`
   font-weight: bold;
 `;
 
-
 const ProfileDropdown = styled.div`
   position: absolute;
   top: 100%;
@@ -121,39 +120,31 @@ const NavBar = () => {
     }
   };
 
-  useEffect(() => {
-    if (!loading && userRole) {
-      if (location.pathname === '/student-login' && userRole === 'Student') {
-        navigate('/student/dashboard');
-      } else if (location.pathname === '/teacher-login' && userRole === 'Teacher') {
-        navigate('/teacher/dashboard');
-      } else if (location.pathname === '/admin-login' && userRole === 'Admin') {
-        navigate('/admin/dashboard');
-      }
-    }
-  }, [userRole, loading, navigate, location.pathname]);
-
-  //Function that renders a dashboard navigation link to the appropriate dashboard for
-  //the role, or no link if the user has no role.
-  const DashboardNavLink = () => {
-    if (userRole === "Teacher"){
+  const renderNavLinks = () => {
+    if (userRole === 'Student') {
       return (
-      <>
-      <NavLink to="/teacher-dashboard" $isActive={location.pathname === '/teacher-dashboard'}>Dashboard</NavLink>
-      </>
+        <>
+          <NavLink to="/student-dashboard" $isActive={location.pathname === '/student-dashboard'}>Dashboard</NavLink>
+          <NavLink to="/scheduling" $isActive={location.pathname === '/scheduling'}>Schedule</NavLink>
+          <NavLink to="/messaging" $isActive={location.pathname === '/messaging'}>Messaging</NavLink>
+        </>
       );
-    }else if (userRole === "Student"){
+    } else if (userRole === 'Teacher') {
       return (
         <>
-        <NavLink to="/student-dashboard" $isActive={location.pathname === '/student-dashboard'}>Dashboard</NavLink>
+          <NavLink to="/teacher-dashboard" $isActive={location.pathname === '/teacher-dashboard'}>Dashboard</NavLink>
+          <NavLink to="/messaging" $isActive={location.pathname === '/messaging'}>Messaging</NavLink>
         </>
-        );
-    }else if (userRole === "Admin"){
+      );
+    } else if (userRole === 'Admin') {
       return (
         <>
-        <NavLink to="/admin-dashboard" $isActive={location.pathname === '/admin-dashboard'}>Dashboard</NavLink>
+          <NavLink to="/admin-dashboard" $isActive={location.pathname === '/admin-dashboard'}>Dashboard</NavLink>
+          <NavLink to="/connections" $isActive={location.pathname === '/connections'}>Connections</NavLink>
+          <NavLink to="/moderation" $isActive={location.pathname === '/moderation'}>Moderation</NavLink>
+          <NavLink to="/admin-profile" $isActive={location.pathname === '/admin-profile'}>Admin Profile</NavLink>
         </>
-        );
+      );
     }
   };
 
@@ -163,22 +154,12 @@ const NavBar = () => {
         <NavLink to="/" $isActive={location.pathname === '/'}>
           <img src={lightbulbIcon} alt="Home" style={{ width: '75px', height: '75px' }} />
         </NavLink>
-        {userRole && (
-          <>
-            <DashboardNavLink/>
-            <NavLink to="/messaging" $isActive={location.pathname === '/messaging'}>Messaging</NavLink>
-            <NavLink to="/homework" $isActive={location.pathname === '/homework'}>Homework</NavLink>
-            <NavLink to="/recordings-page" $isActive={location.pathname === '/recordings-page'}>Recordings</NavLink>
-            <NavLink to="/connections" $isActive={location.pathname === '/connections'}>Connections</NavLink>
-            <NavLink to="/moderation" $isActive={location.pathname === '/moderation'}>Moderation</NavLink>
-          </>
-        )}
+        {renderNavLinks()}
       </NavLinks>
       {auth.currentUser ? (
         <ProfileContainer>
           <ProfileImage src={MenuButton} alt="Profile" onClick={toggleDropdown} />
           <ProfileDropdown isOpen={isDropdownOpen}>
-            
             <DropdownItem to="/settings">Settings</DropdownItem>
             <DropdownItem as="button" onClick={handleLogout}>Logout</DropdownItem>
           </ProfileDropdown>
