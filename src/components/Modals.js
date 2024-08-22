@@ -35,7 +35,7 @@ const CourseOptionsButton = styled.button`
   font-weight: 500;
   border-width: 0;
   border-radius: 1rem;
-  margin: 0.2rem;
+  margin-top: 1.3rem;
   cursor: pointer;
 `;
 

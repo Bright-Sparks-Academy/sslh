@@ -48,7 +48,7 @@ const ProfileInfoContainer = styled.div`
   display: grid;
   height: 34rem;
   width: 95%;
-  grid-template: 1fr 1.2fr 0.3fr / 1fr 1.1fr 1.3fr 1.2fr;
+  grid-template: 1fr 0.6fr 0.3fr / 1fr 1.1fr 1.2fr 1.2fr;
   gap: 10px;
 `;
 
@@ -89,7 +89,7 @@ const RedButton = styled.button`
 const AccountInfo = styled.div`
   width: 15rem;
   height: 1.7rem;
-  margin-left: 2rem;
+  margin: 0.5rem 0 0 1.5rem;
   font-weight: 500;
 `;
 
@@ -109,7 +109,7 @@ const ScrollContainer = styled.div`
   border-radius: 1rem;
   margin-left: 1rem;
   width: 95%;
-  height: 11rem;
+  height: 6rem;
 `;
 
 const Message = styled.div`
