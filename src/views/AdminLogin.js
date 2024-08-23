@@ -99,19 +99,19 @@ const AdminLogin = () => {
       if (!userDoc.exists()) {
         throw new Error('User document does not exist.');
       }
-      
+  
       const userData = userDoc.data();
       const userRole = userData.role;
   
       console.log(`User role: ${userRole}`); // Add this line for debugging
   
-      // Redirect based on role
+      // Redirect based on role with updated paths
       if (userRole === 'Student') {
-        navigate('/student/dashboard');
+        navigate('/student-dashboard');
       } else if (userRole === 'Teacher') {
-        navigate('/teacher/dashboard');
+        navigate('/teacher-dashboard');
       } else if (userRole === 'Admin') {
-        navigate('/admin/dashboard');
+        navigate('/admin-dashboard');
       } else {
         throw new Error('No role assigned to this user.');
       }

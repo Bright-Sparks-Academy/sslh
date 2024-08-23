@@ -469,7 +469,12 @@ const TeacherDashboard = () => {
     }
   };
 
+  const handleReportProblem = async () => {
+    window.open('https://tally.so/r/3NLgrN', '_blank');
+  }
+
   if (!user) return <div>Loading...</div>;
+
 
   return (
     <DashboardContainer>
@@ -665,7 +670,7 @@ const TeacherDashboard = () => {
         </ProfileItem>
 
         <ProfileItem style={{   backgroundColor: '#ffffef' }}>
-          <CourseOptionsButton style={{ width: '100%', backgroundColor: 'red', color: 'white' }}>
+          <CourseOptionsButton style={{ width: '100%', backgroundColor: 'red', color: 'white' }} onClick={handleReportProblem}>
             Report a Problem
           </CourseOptionsButton>
           <CourseOptionsButton style={{ width: '100%' }}>
