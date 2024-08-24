@@ -14,7 +14,6 @@ import AdminLogin from './views/AdminLogin.js';
 import SchedulingPage from './views/SchedulingPage.js';
 import ConnectionsPage from './views/Connections.js';
 import EditingTeacher from './views/EditingTeacher.js';
-import AdminProfile from './views/AdminProfile.js';
 import EditingStudent from './views/EditingStudent.js';
 import Moderation from './views/Moderation.js';
 import { auth } from './firebaseConfig.js';
@@ -78,7 +77,6 @@ const App = () => {
               <Route path="/scheduling" element={<PrivateRoute><SchedulingPage /></PrivateRoute>} />
               <Route path="/connections" element={<PrivateRoute><ConnectionsPage /></PrivateRoute>} />
               <Route path="/admin-editing-teacher" element={<EditingTeacher/> } />
-              <Route path="/admin-profile" element={<AdminProfile/> } />
               <Route path="/admin-editing-student" element={<EditingStudent/> } />
               <Route path="/moderation" element={<Moderation/> } />
               <Route path="*" element={<Navigate to="/" />} />
