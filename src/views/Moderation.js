@@ -274,16 +274,16 @@ const Moderation = () => {
           <SectionHeader>Account Content and Posts</SectionHeader>
           <ContentPostsContainer>
             <WhiteBackground>
-              <ContentHeader>Recordings</ContentHeader>
+              <ContentHeader>Coming soon!</ContentHeader>
               <ScrollContainer>
                 <ContentContainer>
-                  <Content>Recording 1: TITLE</Content>
-                  <Content>6/22/24</Content>
+                  <Content>N/A</Content>
+                  <Content>N/A</Content>
                 </ContentContainer>
               </ScrollContainer>
-              <OptionsButtons style={{ backgroundColor: 'black', color: 'white' }}>View Content</OptionsButtons>
-              <OptionsButtons style={{ backgroundColor: '#ffffb0' }}>Content Options</OptionsButtons>
-              <OptionsButtons style={{ backgroundColor: 'red', color: 'white' }}>Report Content</OptionsButtons>
+              <OptionsButtons style={{ backgroundColor: 'black', color: 'white' }}>Coming soon!</OptionsButtons>
+              <OptionsButtons style={{ backgroundColor: '#ffffb0' }}>Coming soon!</OptionsButtons>
+              <OptionsButtons style={{ backgroundColor: 'red', color: 'white' }}>Coming soon!</OptionsButtons>
             </WhiteBackground>
 
             <WhiteBackground style={{ marginLeft: '0' }}>

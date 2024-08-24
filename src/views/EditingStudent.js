@@ -27,14 +27,14 @@ const UserContainer = styled.div`
   margin-bottom: 40px;
 `;
 
-const ProfilePicture = styled.div`
-  width: 100px;
-  height: 100px;
-  background-color: #C4C4C4;
-  border-radius: 50%;
-  margin-right: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-`;
+// const ProfilePicture = styled.div`
+//   width: 100px;
+//   height: 100px;
+//   background-color: #C4C4C4;
+//   border-radius: 50%;
+//   margin-right: 20px;
+//   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+// `;
 
 const UserName = styled.div`
   font-size: 28px;
@@ -193,7 +193,7 @@ const EditingStudent = () => {
     <Container>
       <Header>Edit Student</Header>
       <UserContainer>
-        <ProfilePicture />
+        {/* <ProfilePicture /> */}
         <UserName>Student Name</UserName>
       </UserContainer>
       <SectionContainer>
@@ -222,23 +222,23 @@ const EditingStudent = () => {
           <ActivityItem>
             <ActivityDetails>
               <div>Assignment History</div>
-              <div>Submitted: 13</div>
-              <div>Missing: 3</div>
+              <div>Submitted: N/A</div>
+              <div>Missing: N/A</div>
             </ActivityDetails>
             <ActivityButtons>
-              <button>View</button>
-              <button>Report</button>
+              <button>Coming soon!</button>
+              <button>N/A</button>
             </ActivityButtons>
           </ActivityItem>
           <ActivityItem>
             <ActivityDetails>
-              <div>Instructor: Instructor A</div>
-              <div>Class: Java</div>
-              <div>Class Avg: B (85.28%)</div>
+              <div>Instructor: N/A</div>
+              <div>Class: N/A</div>
+              <div>Class Avg: N/A</div>
             </ActivityDetails>
             <ActivityButtons>
-              <button>View</button>
-              <button>Report</button>
+              <button>Coming soon!</button>
+              <button>N/A</button>
             </ActivityButtons>
           </ActivityItem>
           <ActivityItem>
