@@ -12,10 +12,36 @@ const PageContainer = styled.div`
 `;
 
 // Header for the page title
-const Header = styled.h1`
-  text-align: center;
-  font-size: 2rem; /* Large font size */
+const Header = styled.header`
+  font-size: 40px;
   font-weight: bold;
+  color: #222;
+  margin-bottom: 40px;
+  margin-top: 100px;
+`;
+
+// Container for username and profile
+const UserContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+`;
+
+// Profile picture
+const ProfilePicture = styled.div`
+  width: 100px;
+  height: 100px;
+  background-color: #C4C4C4;
+  border-radius: 50%;
+  margin-right: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+// Username
+const UserName = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
 `;
 
 // Container for each section of the page (Account Information, User Activity, etc.)
@@ -31,19 +57,18 @@ const SectionContainer = styled.div`
 
 // Account Information container
 const AccountInfoContainer = styled(SectionContainer)`
-  width: 250px;
+  width: 350px;
 `;
 
 // User Activity container
 const UserActivityContainer = styled(SectionContainer)`
-  width: 500px;
+  width: 450px;
   flex-direction: column;
 `;
 
 // Edit User Settings container
 const EditUserSettingsContainer = styled(SectionContainer)`
-  width: 500px;
-  height: 100%; /* Full height */
+  width: 350px;
 `;
 
 // Buttons for reporting or deleting an account
@@ -58,21 +83,6 @@ const Button = styled.button`
   font-size: 1rem;
 `;
 
-// Container for user profile image and name
-const UserProfileContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-// Profile image styling
-const ProfileImage = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-`;
-
 // Container for student list in user activity
 const StudentListContainer = styled.div`
   background-color: #F2F2F2; /* Light gray background */
@@ -82,8 +92,20 @@ const StudentListContainer = styled.div`
 `;
 
 // Button for each student or course item
-const ViewButton = styled.button`
+const EditButton = styled.button`
   background-color: black;
+  color: white;
+  width: 50px;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 5px;
+`;
+
+// Button for each report button
+const ReportButton = styled.button`
+  background-color: red;
   color: white;
   padding: 5px;
   border: none;
@@ -113,12 +135,11 @@ const StudentItem = styled.div`
 const EditTeacher = () => {
   return (
 <PageContainer>
-      <Header>Edit Teacher</Header>
-
-      <UserProfileContainer>
-        <ProfileImage src="profile-pic-url" alt="Teacher" />
-        <span>Teacher Name</span>
-      </UserProfileContainer>
+<Header>Edit Teacher</Header>
+      <UserContainer>
+        <ProfilePicture />
+        <UserName>Teacher Name</UserName>
+      </UserContainer>
 
       <div style={{ display: 'flex' }}>
         <AccountInfoContainer>
@@ -133,6 +154,11 @@ const EditTeacher = () => {
           <Button>Delete Account</Button>
         </AccountInfoContainer>
 
+        <EditUserSettingsContainer>
+        <SectionHeader>Edit User Settings</SectionHeader>
+        {/* Add form elements here */}
+        </EditUserSettingsContainer>
+
         <UserActivityContainer>
           <SectionHeader>User Activity</SectionHeader>
 
@@ -140,13 +166,13 @@ const EditTeacher = () => {
             <h3>Post History</h3>
             <StudentItem>
               <span>Recordings: 12</span>
-              <ViewButton>View</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              <EditButton>Edit</EditButton>
+              <ReportButton>Report</ReportButton>
             </StudentItem>
             <StudentItem>
               <span>Assignments: 11</span>
-              <ViewButton>View</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              <EditButton>Edit</EditButton>
+              <ReportButton>Report</ReportButton>
             </StudentItem>
           </div>
 
@@ -154,13 +180,13 @@ const EditTeacher = () => {
             <h3>Communication</h3>
             <StudentItem>
               <span>Online Meetings: 6</span>
-              <ViewButton>View</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              <EditButton>Edit</EditButton>
+              <ReportButton>Report</ReportButton>
             </StudentItem>
             <StudentItem>
               <span>Messages: 37</span>
-              <ViewButton>View</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              <EditButton>Edit</EditButton>
+              <ReportButton>Report</ReportButton>
             </StudentItem>
           </div>
 
@@ -168,22 +194,17 @@ const EditTeacher = () => {
             <h3>All Students</h3>
             <StudentItem>
               <span>Student A</span>
-              <ViewButton>View</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              <EditButton>Edit</EditButton>
+              <ReportButton>Report</ReportButton>
             </StudentItem>
             <StudentItem>
               <span>Student B</span>
-              <ViewButton>View</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              <EditButton>Edit</EditButton>
+              <ReportButton>Report</ReportButton>
             </StudentItem>
           </StudentListContainer>
         </UserActivityContainer>
       </div>
-
-      <EditUserSettingsContainer>
-        <SectionHeader>Edit User Settings</SectionHeader>
-        {/* Add form elements here */}
-      </EditUserSettingsContainer>
     </PageContainer>
   );
 };
