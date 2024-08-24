@@ -16,6 +16,10 @@ import ConnectionsPage from './views/Connections.js';
 import EditingTeacher from './views/EditingTeacher.js';
 import EditingStudent from './views/EditingStudent.js';
 import Moderation from './views/Moderation.js';
+import ReportProblemAdmin from './views/forms/reportProblemAdmin.js'
+import ReportProblemNonAdmin from './views/forms/reportProblemNonAdmin.js'
+import RequestChangeTeacher from './views/forms/requestChangeTeacher.js'
+import RequestLeaveTeacher from './views/forms/requestLeaveTeacher.js'
 import { auth } from './firebaseConfig.js';
 import { getRole } from '././components/roles.js'; // Adjust the path as needed
 import GlobalStyle from './GlobalStyles.js';
@@ -79,6 +83,10 @@ const App = () => {
               <Route path="/admin-editing-teacher" element={<EditingTeacher/> } />
               <Route path="/admin-editing-student" element={<EditingStudent/> } />
               <Route path="/moderation" element={<Moderation/> } />
+              <Route path="report-problem-admin" element={<ReportProblemAdmin/>} />
+              <Route path="report-problem" element={<ReportProblemNonAdmin/>} />
+              <Route path="request-change-teacher" element={<RequestChangeTeacher/>} />
+              <Route path="request-change-leave" element={<RequestLeaveTeacher/>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>
