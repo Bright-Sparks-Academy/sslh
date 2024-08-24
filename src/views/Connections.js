@@ -286,10 +286,10 @@ const ConnectionsPage = () => {
                           <ConnectionInfo>Joined:</ConnectionInfo>
                           <ViewButton>View</ViewButton>
                         </ProfileSectionContainer>
-                        <ProfileSectionContainer>
+                        {/* <ProfileSectionContainer>
                           <LetterGrade>A</LetterGrade>
                           <NumberGrade>99.28%</NumberGrade>
-                        </ProfileSectionContainer>
+                        </ProfileSectionContainer> */}
                       </ConnectionContainer>
                     </ScrollContainer>
                   </WhiteBackground>
@@ -308,15 +308,16 @@ const ConnectionsPage = () => {
                           <ConnectionInfo>Students:</ConnectionInfo>
                           <ViewButton>View</ViewButton>
                         </ProfileSectionContainer>
-                        <ProfileSectionContainer>
+                        {/* <ProfileSectionContainer>
                           <ConnectionInfo>Class Avg</ConnectionInfo>
                           <LetterGrade>B</LetterGrade>
                           <NumberGrade>99.28%</NumberGrade>
-                        </ProfileSectionContainer>
+                        </ProfileSectionContainer> */}
                       </ConnectionContainer>
                     </div>
 
                     <div>
+                      <br></br>
                       <ConnectionInfo>Selected Student:</ConnectionInfo>
                       <ConnectionContainer>
                         <ProfileSectionContainer>
@@ -329,10 +330,10 @@ const ConnectionsPage = () => {
                           <ConnectionInfo>Joined:</ConnectionInfo>
                           <ViewButton>View</ViewButton>
                         </ProfileSectionContainer>
-                        <ProfileSectionContainer>
+                        {/* <ProfileSectionContainer>
                           <LetterGrade>C+</LetterGrade>
                           <NumberGrade>79.28%</NumberGrade>
-                        </ProfileSectionContainer>
+                        </ProfileSectionContainer> */}
                       </ConnectionContainer>
                     </div>
 
