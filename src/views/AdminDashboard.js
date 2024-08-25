@@ -1,712 +1,320 @@
 import React, {useState, useEffect} from 'react';
-import ReactDOM from 'react-dom';
 import axios from "axios";
+import styled from 'styled-components';
+import editIcon from '../assets/draft.png'
+import plusIcon from '../assets/Plus.png'
 
-const styles = {
-  pageContainer: {
-    marginTop: '70px',
-    padding: '1rem',
-    fontFamily: "'Gotham', 'Quicksand', sans-serif",
-    backgroundColor: '#FFFFFF',
-    color: '#000000',
-  },
-  heading: {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-  },
-  header: {
-    textAlign: 'center',
-    fontSize: '23px',
-    fontFamily: "'Quicksand', sans-serif",
-    position: 'absolute',
-    top: '15px',
-    left: '270px'
-  },
-  subheader: {
-    fontSize: '13px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '50px',
-    left: '30px'
-  },
-  adminInfo: {
-    position: 'absolute',
-    top: '80px',
-    left: '15px',
-    backgroundColor: '#F7D703',
-    width: '250px',
-    height: '120px',
-    borderRadius: '15px',
-    paddingTop: '5px',
-    boxSizing: 'border-box'
-  },
-  adminInfoDetails: {
-    margin: '0',
-    padding: '2px 35px',
-    paddingLeft: '70px'
-  },
-  adminViewBtn: {
-    backgroundColor: 'black',
-    borderRadius: '15px',
-    width: '50px',
-    height: '20px',
-    position: 'absolute',
-    top: '95px',
-    left: '190px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  adminViewText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '12px'
-  },
-  managedInstructors: {
-    position: 'absolute',
-    top: '80px',
-    left: '270px',
-    backgroundColor: '#F7D703',
-    borderRadius: '15px',
-    width: '230px',
-    height: '175px'
-  },
-  managedInstructorsText: {
-    fontSize: '12px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '0px',
-    left: '10px'
-  },
-  instructorA: {
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    position: 'absolute',
-    top: '34px',
-    left: '12px',
-    width: '210px',
-    height: '65px'
-  },
-  instructorB: {
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    position: 'absolute',
-    top: '104px',
-    left: '12px',
-    width: '210px',
-    height: '65px'
-  },
-  instructor1: {
-    fontSize: '9px',
-    position: 'absolute',
-    top: '29px',
-    left: '12px'
-  },
-  instructor2: {
-    fontSize: '10px',
-    margin: '0',
-    padding: '2px 35px',
-    paddingLeft: '70px'
-  },
-  instructor3: {
-    position: 'absolute',
-    top: '-22px',
-    left: '152px',
-    fontSize: '10px'
-  },
-  instructor4: {
-    position: 'absolute',
-    top: '-35px',
-    left: '167px',
-    fontSize: '20px'
-  },
-  instructor5: {
-    position: 'absolute',
-    top: '15px',
-    left: '163px',
-    fontSize: '8px'
-  },
-  instructorViewBtn: {
-    backgroundColor: 'black',
-    borderRadius: '15px',
-    width: '50px',
-    height: '15px',
-    position: 'absolute',
-    top: '47px',
-    left: '70px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  instructorViewText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '10px'
-  },
-  communication: {
-    position: 'absolute',
-    top: '80px',
-    left: '505px',
-    backgroundColor: '#F7D703',
-    borderRadius: '15px',
-    width: '215px',
-    height: '105px'
-  },
-  communicationText: {
-    fontSize: '12px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '10px'
-  },
-  adminA: {
-    fontSize: '9px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '55px',
-    left: '30px'
-  },
-  adminB: {
-    fontSize: '9px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '55px',
-    left: '90px'
-  },
-  communicationViewBtn: {
-    backgroundColor: 'black',
-    borderRadius: '15px',
-    width: '50px',
-    height: '15px',
-    position: 'absolute',
-    top: '85px',
-    left: '150px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  communicationViewText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '10px'
-  },
-  courseMaterials: {
-    position: 'absolute',
-    top: '205px',
-    left: '15px',
-    backgroundColor: '#F7D703',
-    borderRadius: '15px',
-    width: '250px',
-    height: '255px'
-  },
-  courseMaterialsText: {
-    fontSize: '12px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '10px'
-  },
-  courseMaterialsWhite: {
-    position: 'absolute',
-    top: '35px',
-    left: '5px',
-    backgroundColor: '#ffffff',
-    borderRadius: '15px',
-    width: '238px',
-    height: '215px'
-  },
-  lessonRecordings: {
-    position: 'absolute',
-    top: '45px',
-    left: '5px',
-    backgroundColor: '#F7D703',
-    borderRadius: '15px',
-    width: '110px',
-    height: '155px'
-  },
-  lessonRecordingsText: {
-    fontSize: '9px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '10px'
-  },
-  publishedAssignments: {
-    position: 'absolute',
-    top: '45px',
-    left: '123px',
-    backgroundColor: '#F7D703',
-    borderRadius: '15px',
-    width: '110px',
-    height: '155px'
-  },
-  publishedAssignmentsText: {
-    fontSize: '8px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-7px',
-    left: '10px'
-  },
-  selectClass: {
-    position: 'absolute',
-    top: '5px',
-    left: '65px',
-    backgroundColor: '#ffffff',
-    borderRadius: '5px',
-    width: '115px',
-    height: '20px',
-    border: '1px solid black'
-  },
-  selectClassText: {
-    position: 'absolute',
-    top: '-10px',
-    left: '15px',
-    fontSize: '10px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"
-  },
-  recording1: {
-    position: 'absolute',
-    top: '20px',
-    left: '10px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '10px',
-    width: '95px',
-    height: '30px'
-  },
-  recording2: {
-    position: 'absolute',
-    top: '58px',
-    left: '10px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '10px',
-    width: '95px',
-    height: '30px'
-  },
-  recording3: {
-    position: 'absolute',
-    top: '96px',
-    left: '10px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '10px',
-    width: '95px',
-    height: '30px'
-  },
-  recordingNumber: {
-    fontSize: '8.5px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '10px'
-  },
-  recordingDate: {
-    fontSize: '8.5px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '3px',
-    left: '10px'
-  },
-  homework1: {
-    position: 'absolute',
-    top: '25px',
-    left: '10px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    width: '98px',
-    height: '45px'
-  },
-  homework2: {
-    position: 'absolute',
-    top: '75px',
-    left: '10px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    width: '98px',
-    height: '45px'
-  },
-  homework3: {
-    position: 'absolute',
-    top: '95px',
-    left: '10px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    width: '98px',
-    height: '30px'
-  },
-  homeworkNumber: {
-    fontSize: '8px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '5px'
-  },
-  homeworkDate: {
-    fontSize: '8px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '67px'
-  },
-  homeworkView: {
-    backgroundColor: 'black',
-    borderRadius: '15px',
-    width: '45px',
-    height: '13px',
-    position: 'absolute',
-    top: '25px',
-    left: '27.5px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  homeworkViewText: {
-    color: 'yellow',
-    textAlign: 'center',
-    fontSize: '10px'
-  },
-  managedStudents: {
-    position: 'absolute',
-    top: '260px',
-    left: '270px',
-    backgroundColor: '#F7D703',
-    borderRadius: '15px',
-    width: '230px',
-    height: '200px'
-  },
-  managedStudentsText: {
-    fontSize: '12px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '10px'
-  },
-  selectInstructorStudents: {
-    position: 'absolute',
-    top: '33px',
-    left: '58px',
-    backgroundColor: '#ffffff',
-    borderRadius: '5px',
-    width: '115px',
-    height: '20px',
-    border: '1px solid black'
-  },
-  selectInstructorStudentsText: {
-    position: 'absolute',
-    top: '-13px',
-    left: '6px',
-    fontSize: '10px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"
-  },
-  studentA: {
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    position: 'absolute',
-    top: '60px',
-    left: '15px',
-    width: '210px',
-    height: '65px'
-  },
-  studentB: {
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    position: 'absolute',
-    top: '130px',
-    left: '15px',
-    width: '210px',
-    height: '65px'
-  },
-  student1: {
-    fontSize: '9px',
-    position: 'absolute',
-    top: '29px',
-    left: '12px'
-  },
-  student2: {
-    fontSize: '10px',
-    margin: '0',
-    padding: '2px 35px',
-    paddingLeft: '70px'
-  },
-  student3: {
-    position: 'absolute',
-    top: '-22px',
-    left: '152px',
-    fontSize: '10px'
-  },
-  student4: {
-    position: 'absolute',
-    top: '-35px',
-    left: '167px',
-    fontSize: '20px'
-  },
-  student5: {
-    position: 'absolute',
-    top: '15px',
-    left: '163px',
-    fontSize: '8px'
-  },
-  studentViewBtn: {
-    backgroundColor: 'black',
-    borderRadius: '15px',
-    width: '50px',
-    height: '15px',
-    position: 'absolute',
-    top: '47px',
-    left: '70px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  studentViewText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '10px'
-  },
-  chatroomMonitor: {
-    position: 'absolute',
-    top: '190px',
-    left: '505px',
-    backgroundColor: '#F7D703',
-    borderRadius: '15px',
-    width: '215px',
-    height: '270px'
-  },
-  chatroomMonitorText: {
-    fontSize: '12px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '-10px',
-    left: '10px'
-  },
-  chatroomMonitorWhite: {
-    position: 'absolute',
-    top: '35px',
-    left: '9px',
-    backgroundColor: '#ffffff',
-    borderRadius: '15px',
-    width: '198px',
-    height: '220px'
-  },
-  selectInstructorChatroom: {
-    position: 'absolute',
-    top: '8px',
-    left: '43px',
-    backgroundColor: '#ffffff',
-    borderRadius: '5px',
-    width: '115px',
-    height: '20px',
-    border: '1px solid black'
-  },
-  selectInstructorChatroomText: {
-    position: 'absolute',
-    top: '-12px',
-    left: '6px',
-    fontSize: '10px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"
-  },
-  chatroomStudentA: {
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    position: 'absolute',
-    top: '60px',
-    left: '20px',
-    width: '170px',
-    height: '65px'
-  },
-  chatroomStudentB: {
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    position: 'absolute',
-    top: '135px',
-    left: '20px',
-    width: '170px',
-    height: '65px'
-  },
-  student1Chat: {
-    fontSize: '9px',
-    position: 'absolute',
-    top: '33px',
-    left: '12px'
-  },
-  chatroomViewButton: {
-    backgroundColor: 'black',
-    borderRadius: '15px',
-    width: '50px',
-    height: '15px',
-    position: 'absolute',
-    top: '47px',
-    left: '60px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  chatroomViewButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '10px'
-  },
-  chatroomReportButton: {
-    backgroundColor: 'rgb(250, 2, 2)',
-    borderRadius: '15px',
-    width: '50px',
-    height: '15px',
-    position: 'absolute',
-    top: '47px',
-    left: '115px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  chatroomReportButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '10px'
-  },
-  chatroomHistory: {
-    fontSize: '10px',
-    fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-    position: 'absolute',
-    top: '25px',
-    left: '55px'
-  },
-  recordingsDraftBox: {
-    position: 'absolute',
-    top: '130px',
-    left: '53px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    width: '20px',
-    height: '20px'
-  },
-  recordingsDraft: {
-    position: 'absolute',
-    top: '2px',
-    left: '2.5px',
-    borderRadius: '15px',
-    width: '16px',
-    height: '16px'
-  },
-  recordingsPlusBox: {
-    position: 'absolute',
-    top: '130px',
-    left: '80px',
-    backgroundColor: 'rgb(199, 199, 204)',
-    borderRadius: '15px',
-    width: '20px',
-    height: '20px'
-  },
-  recordingsPlus: {
-    position: 'absolute',
-    top: '2px',
-    left: '2.5px',
-    borderRadius: '15px',
-    width: '15px',
-    height: '15px'
-  },
-  adminDraft: {
-    position: 'absolute',
-    top: '5px',
-    left: '220px',
-    borderRadius: '15px',
-    width: '22px',
-    height: '22px'
-  },
-  managedInstructorsDraft: {
-    position: 'absolute',
-    top: '5px',
-    left: '200px',
-    borderRadius: '15px',
-    width: '22px',
-    height: '22px'
-  },
-  managedStudentsDraft: {
-    position: 'absolute',
-    top: '5px',
-    left: '200px',
-    borderRadius: '15px',
-    width: '22px',
-    height: '22px'
-  },
-  studentSettings: {
-    position: 'absolute',
-    top: '5px',
-    left: '150px',
-    borderRadius: '15px',
-    width: '16px',
-    height: '16px'
-  },
-  adminProfile: {
-    position: 'absolute',
-    top: '0px',
-    left: '0px',
-    borderRadius: '15px',
-    width: '60px',
-    height: '60px'
-  },
-  instructorProfile: {
-    position: 'absolute',
-    top: '-5px',
-    left: '5px',
-    borderRadius: '15px',
-    width: '60px',
-    height: '60px'
-  },
-  communicationAdminA: {
-    position: 'absolute',
-    top: '15px',
-    left: '20px',
-    borderRadius: '15px',
-    width: '60px',
-    height: '60px'
-  },
-  communicationAdminB: {
-    position: 'absolute',
-    top: '15px',
-    left: '80px',
-    borderRadius: '15px',
-    width: '60px',
-    height: '60px'
-  },
-  studentProfileManaged: {
-    position: 'absolute',
-    top: '-5px',
-    left: '2px',
-    borderRadius: '15px',
-    width: '60px',
-    height: '60px'
-  },
-  studentProfileChatroom: {
-    position: 'absolute',
-    top: '-6px',
-    left: '1px',
-    borderRadius: '15px',
-    width: '60px',
-    height: '60px'
-  },
-  selectClassArrow: {
-    position: 'absolute',
-    top: '4px',
-    left: '82px',
-    width: '27px',
-    height: '11px'
-  },
-  selectInstructorArrow1: {
-    position: 'absolute',
-    top: '4px',
-    left: '92px',
-    width: '20px',
-    height: '11px'
-  },
-  selectInstructorArrow2: {
-    position: 'absolute',
-    top: '5px',
-    left: '92px',
-    width: '20px',
-    height: '11px'
-  },
-  body: {
-    backgroundColor: '#f7f7e7'
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFAED;
+  width: 99.4vw;
+  height: 110vh;
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 95%;
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: black;
+  margin: 0.8rem;
+`;
+
+const EditIcon = styled.img`
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+`;
+
+const DashboardItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-radius: 2rem;
+  background-color: #FFD900;
+`;
+
+const DashboardLabel = styled.header`
+  height: 35px;
+  width: 93%;
+  font-size: 1.5rem;
+  font-weight: bold;
+`;
+
+const DashboardItemsContainer = styled.div`
+  display: grid;
+  height: 550px;
+  width: 95%;
+  grid-template: 1fr 1.35fr/ 1fr 1fr 1fr;
+  gap: 10px;
+`;
+
+const DashboardTitle = styled.header`
+  height: 50px;
+  width: 380px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  padding-top: 95px;
+`;
+
+const AccountInfo = styled.div`
+  width: 95%;
+  height: 1.7rem;
+  margin-left: 1rem;
+  font-weight: 600;
+`;
+
+const AccountInfoView = styled.button`
+  background-color: black;
+  color: white;
+  height: 2rem;
+  width: 6rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-width: 0;
+  border-radius: 1rem;
+  margin: 0 0 0 21rem;
+  cursor: pointer;
+`;
+
+const ScrollContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+  direction: rtl;
+  border-radius: 1rem;
+  margin-left: 1rem;
+  width: 95%;
+  height: 10rem;
+`;
+
+const UserContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6.5rem;
+  width: 90%;
+  border-radius: 1rem;
+  margin-top: 0.5rem;
+  background-color: lightgray;
+  direction: ltr;
+`;
+
+const ProfileSectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 33%;
+`;
+
+const ProfileName = styled.h3`
+  padding: 0 1rem;
+  text-align: center;
+`;
+
+const ManagedUserInfo = styled.span`
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 650;
+`;
+
+const EditButton = styled.button`
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  background-color: black;
+  color: white;
+  height: 1.7rem;
+  width: 6rem;
+  border-radius: 3rem;
+  border-width: 0;
+  cursor: pointer;
+`;
+
+const LetterGrade = styled.h1`
+  margin: 0;
+`;
+
+const NumberGrade = styled.h4`
+  margin: 0;
+`;
+
+const DropdownContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Dropdown = styled.select`
+  font-family: "Quicksand", sans-serif;
+  font-size: 1.1rem;
+  padding: 0 1rem;
+  width: 13rem;
+  height: 2.5rem;
+  border-radius: 0.3rem;
+  margin-left: 0.5rem;
+`;
+
+const CommunicationScrollContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  width: 25rem;
+  height: 7.5rem;
+  margin-left: 1.3rem;
+  padding-bottom: 0.5rem;
+`;
+
+const Contact = styled.button`
+  font-family: "Quicksand", sans-serif;
+  background-color: lightgray;
+  height: 6rem;
+  width: 8rem;
+  border-radius: 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: font-weight 0.3s ease;
+
+  &:hover {
+    font-weight: bold;
   }
-};
+`;
+
+const ContactViewButton = styled.button`
+  font-family: "Quicksand", sans-serif;
+  color: white;
+  font-size: 95%;
+  font-weight: 500;
+  border-radius: 1rem;
+  height: 2rem;
+  width: 6rem;
+  border: none;
+  margin-left: 20rem;
+  margin-top: 0.25rem;
+  background-color: black;
+  cursor: pointer;
+`;
+
+const WhiteBackground = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 0.7rem;
+  padding-top: 1rem;
+  background-color: white;
+  border-radius: 1rem;
+  height: 14rem;
+  width: 95%;
+`;
+
+const CourseMaterialContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 95%;
+  margin-top: 0.7rem;
+  height: 10rem;
+`;
+
+const CourseMaterialSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48%;
+  heigth: 100%;
+  border-radius: 1rem;
+  background-color: #FFD900;
+`;
+
+const MaterialHeader = styled.header`
+  font-weight: 550;
+  margin: 0.2rem 0;
+`;
+
+const Material = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 550;
+  background-color: lightgray;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  direction: ltr;
+  width: 85%;
+  height: 2.5rem;
+`;
+
+const MaterialInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const MaterialInfo = styled.span`
+  font-size: 0.9rem;
+`;
+
+const ViewMaterialButton = styled.button`
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  color: white;
+  border-radius: 0.5rem;
+  height: 1.5rem;
+  width: 3.5rem;
+  border: none;
+  background-color: black;
+  cursor: pointer;
+`;
+
+const IconContainer = styled.div`
+  width: 100%;
+  direction: rtl;
+`;
+
+const EditMaterialIcon = styled.div`
+  width: 1rem;
+  height: 1rem;
+  background-color: lightgray;
+`;
+
+const ChatroomLabel = styled.header`
+  margin-top: 1rem;
+`;
+
+const Line = styled.hr`
+  width: 20rem;
+  margin: 0;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
+const ChatroomButton = styled.button`
+  font-family: "Quicksand", sans-serif;
+  font-size: 95%;
+  font-weight: 500;
+  border-radius: 1rem;
+  color: white;
+  margin: 0.3rem;
+  height: 2rem;
+  width: 6rem;
+  border: none;
+  cursor: pointer;
+`;
 
 
 const AdminDashboard = () => {
@@ -745,128 +353,159 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div style={styles.pageContainer}>
-      <h1 style={styles.heading}>Admin Dashboard</h1>
-      <p>Welcome to the admin dashboard.</p>
-      <div style={styles.header}>Admin Dashboard</div>
-      <div style={styles.subheader}>Subheader</div>
+    <PageContainer>
+      <DashboardTitle>Admin Dashboard</DashboardTitle>
+      <DashboardLabel>{`{Admin Name}'s`} Profile</DashboardLabel>
+      <DashboardItemsContainer>
+        <DashboardItem>
+          <SectionHeader>
+            Account Information
+            <EditIcon src={editIcon} alt='Edit Icon'></EditIcon>
+          </SectionHeader>
+          
+          <AccountInfo>Admin: </AccountInfo>
+          <AccountInfo>User ID: </AccountInfo>
+          <AccountInfo>Class: </AccountInfo>
+          <AccountInfo>Last Joined: </AccountInfo>
+          <AccountInfo>Email: </AccountInfo>
+          <AccountInfoView>View</AccountInfoView>
+        </DashboardItem>
+
+        <DashboardItem>
+          <SectionHeader>
+            Managed Instructors
+            <EditIcon src={editIcon} alt='Edit Icon'></EditIcon>
+          </SectionHeader>
+
+          <ScrollContainer>
+            <UserContainer>
+              <ProfileSectionContainer>
+                <ProfileName>Instructor A</ProfileName>
+              </ProfileSectionContainer>
+              <ProfileSectionContainer style={{ alignItems: 'flex-start' }}>
+                <ManagedUserInfo>Class:</ManagedUserInfo>
+                <ManagedUserInfo>Recordings:</ManagedUserInfo>
+                <ManagedUserInfo>Students:</ManagedUserInfo>
+                <EditButton>Edit</EditButton>
+              </ProfileSectionContainer>
+              <ProfileSectionContainer>
+                <ManagedUserInfo>Class Avg</ManagedUserInfo>
+                <LetterGrade>B</LetterGrade>
+                <NumberGrade>99.28%</NumberGrade>
+              </ProfileSectionContainer>
+            </UserContainer>
+          </ScrollContainer>
+        </DashboardItem>
+          
+        <DashboardItem>
+          <SectionHeader>Communication</SectionHeader>
+          <CommunicationScrollContainer>
+            <Contact>Instructor A</Contact>
+            <Contact>Student B</Contact>
+            <Contact>Admin C</Contact>
+          </CommunicationScrollContainer>
+          <ContactViewButton>View</ContactViewButton>
+        </DashboardItem>
       
-      {/* Display error if exists */}
-      {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
+        <DashboardItem>
+          <SectionHeader>Course Materials</SectionHeader>
+          <WhiteBackground>
+            <DropdownContainer>
+                <Dropdown>
+                  <option value="none" selected disabled hidden>Select Class</option>
+                </Dropdown>
+            </DropdownContainer>
 
-      <div style={styles.adminInfo}>
-        <div style={styles.adminInfoDetails}>Admin Info</div>
-        {isAdminInfoOpened && adminInfo && (
-          <ul>
-            <li>Name: {adminInfo.name}</li>
-            <li>Role: {adminInfo.role}</li>
-            <li>Email: {adminInfo.email}</li>
-          </ul>
-        )}
-        <div style={styles.adminViewBtn} onClick={displayAdminInfo}>
-          <div style={styles.adminViewText}>{isAdminInfoOpened ? "Close" : "View" }</div>
-        </div>
-      </div>
+            <CourseMaterialContainer>
+              <CourseMaterialSection>
+                <MaterialHeader>Lesson Recordings</MaterialHeader>
+                <ScrollContainer style={{ height: '6.5rem', margin: '0' }}>
+                  <Material>Recording 1: TITLE 6/22/24</Material>
+                </ScrollContainer>
 
-      {/* Managed Instructors Section */}
-      <div style={styles.managedInstructors}>
-        <div style={styles.managedInstructorsText}>Managed Instructors</div>
-        <div style={styles.instructorA}>
-          <div style={styles.instructor1}>Instructor A</div>
-          {instructorData && (
-            <ul>
-              {Object.entries(instructorData[0] || {}).map(([key, value]) => (
-                <li key={key}>{key}: {value}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-        <div style={styles.instructorB}>
-          <div style={styles.instructor2}>Instructor B</div>
-          {instructorData && (
-            <ul>
-              {Object.entries(instructorData[1] || {}).map(([key, value]) => (
-                <li key={key}>{key}: {value}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
+              </CourseMaterialSection>
 
-      {/* Communication Section */}
-      <div style={styles.communication}>
-        <div style={styles.communicationText}>Communication</div>
-        <div style={styles.adminA}>Admin A</div>
-        <div style={styles.adminB}>Admin B</div>
-        <div style={styles.communicationViewBtn}>
-          <div style={styles.communicationViewText}>View</div>
-        </div>
-      </div>
+              <CourseMaterialSection>
+                <MaterialHeader>Published Assignments</MaterialHeader>
+                <ScrollContainer style={{ height: '6.5rem', margin: '0' }}>
+                  <Material>
+                    <MaterialInfoContainer>
+                      <MaterialInfo>Homework 1</MaterialInfo>
+                      <MaterialInfo>7/22</MaterialInfo>
+                    </MaterialInfoContainer>
+                    <ViewMaterialButton>View</ViewMaterialButton>
+                  </Material>
+                </ScrollContainer>
+              </CourseMaterialSection>
+            </CourseMaterialContainer>
+          </WhiteBackground>
+        </DashboardItem>
 
-      {/* Course Materials Section */}
-      <div style={styles.courseMaterials}>
-        <div style={styles.courseMaterialsText}>Course Materials</div>
-        <div style={styles.courseMaterialsWhite}>
-          <div style={styles.lessonRecordings}>
-            <div style={styles.lessonRecordingsText}>Lesson Recordings</div>
-            {courseMaterialData && (
-              <ul>
-                {courseMaterialData.map((courseMaterial, index) => (
-                  <li key={index}>
-                    {Object.entries(courseMaterial).map(([key, value]) => (
-                      <span key={key}>{key}: {value} </span>
-                    ))}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div style={styles.publishedAssignments}>
-            <div style={styles.publishedAssignmentsText}>Published Assignments</div>
-          </div>
-        </div>
-      </div>
+        <DashboardItem>
+          <SectionHeader>
+            Managed Students
+            <EditIcon src={editIcon} alt='Edit Icon'></EditIcon>
+          </SectionHeader>
 
-      {/* Managed Students Section */}
-      <div style={styles.managedStudents}>
-        <div style={styles.managedStudentsText}>Managed Students</div>
-        <div style={styles.studentA}>
-          <div style={styles.student1}>Student A</div>
-        </div>
-        <div style={styles.studentB}>
-          <div style={styles.student2}>Student B</div>
-        </div>
-      </div>
+          <DropdownContainer>
+            <Dropdown>
+              <option value="none" selected disabled hidden>Select Instructor</option>
+            </Dropdown>
+          </DropdownContainer>
+          <ScrollContainer style={{ height: '12rem' }}>
+            <UserContainer>
+              <ProfileSectionContainer>
+                <ProfileName>Student A</ProfileName>
+              </ProfileSectionContainer>
+              <ProfileSectionContainer style={{ alignItems: 'flex-start' }}>
+                <ManagedUserInfo>Class:</ManagedUserInfo>
+                <ManagedUserInfo>Recordings:</ManagedUserInfo>
+                <ManagedUserInfo>Students:</ManagedUserInfo>
+                <EditButton>Edit</EditButton>
+              </ProfileSectionContainer>
+              <ProfileSectionContainer>
+                <LetterGrade>B</LetterGrade>
+                <NumberGrade>99.28%</NumberGrade>
+              </ProfileSectionContainer>
+            </UserContainer>
+          </ScrollContainer>
+        </DashboardItem>
 
-      {/* Chatroom Monitor Section */}
-      <div style={styles.chatroomMonitor}>
-        <div style={styles.chatroomMonitorText}>Chatroom Monitor</div>
-        <div style={styles.chatroomMonitorWhite}>
-          <div style={styles.selectInstructorChatroom}>
-            <div style={styles.selectInstructorChatroomText}>Select Instructor</div>
-          </div>
-          <div style={styles.chatroomStudentA}>
-            <div style={styles.student1Chat}>Student A</div>
-            {chatroomMonitorData && (
-              <ul>
-                {Object.entries(chatroomMonitorData).map(([key, value]) => (
-                  <li key={key}>{key}: {value}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div style={styles.chatroomViewButton}>
-            <div style={styles.chatroomViewButtonText}>View</div>
-          </div>
-          <div style={styles.chatroomReportButton}>
-            <div style={styles.chatroomReportButtonText}>Report</div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <DashboardItem>
+          <SectionHeader>Chatroom Monitor</SectionHeader>
+
+          <WhiteBackground>
+            <DropdownContainer>
+              <Dropdown>
+                <option value="none" selected disabled hidden>Select Instructor</option>
+              </Dropdown>
+            </DropdownContainer>
+            
+            <ChatroomLabel>Chatroom History</ChatroomLabel>
+            <Line />
+            <ScrollContainer style={{ height: '8.5rem', width: '90%' }}>
+              <UserContainer>
+                <ProfileSectionContainer>
+                  <ProfileName>Student A</ProfileName>
+                </ProfileSectionContainer>
+                <ProfileSectionContainer style={{ alignItems: 'flex-start' }}>
+                  <ManagedUserInfo>Class:</ManagedUserInfo>
+                  <ManagedUserInfo>Started:</ManagedUserInfo>
+                  <ManagedUserInfo>Messages:</ManagedUserInfo>
+                </ProfileSectionContainer>
+                <ProfileSectionContainer>
+                  <ButtonContainer>
+                    <ChatroomButton style={{ backgroundColor: '#000000' }}>View</ChatroomButton>
+                    <ChatroomButton style={{ backgroundColor: 'red' }}>Report</ChatroomButton>
+                  </ButtonContainer>
+                </ProfileSectionContainer>
+              </UserContainer>
+            </ScrollContainer>
+          </WhiteBackground>
+        </DashboardItem>
+      </DashboardItemsContainer>
+    </PageContainer>
   );
 };
-
-ReactDOM.render(<AdminDashboard />, document.getElementById('root'));
 
 export default AdminDashboard;
