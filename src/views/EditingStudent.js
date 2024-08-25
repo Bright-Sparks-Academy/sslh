@@ -9,13 +9,13 @@ const Container = styled.div`
   background-color: white;
   color: #333;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Quicksand", sans-serif;
   position: relative;
   top: 100px
 `;
 
 const Header = styled.header`
-  font-size: 36px;
+  font-size: 40px;
   font-weight: bold;
   color: #222;
   margin-bottom: 40px;
@@ -27,14 +27,14 @@ const UserContainer = styled.div`
   margin-bottom: 40px;
 `;
 
-const ProfilePicture = styled.div`
-  width: 100px;
-  height: 100px;
-  background-color: #C4C4C4;
-  border-radius: 50%;
-  margin-right: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-`;
+// const ProfilePicture = styled.div`
+//   width: 100px;
+//   height: 100px;
+//   background-color: #C4C4C4;
+//   border-radius: 50%;
+//   margin-right: 20px;
+//   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+// `;
 
 const UserName = styled.div`
   font-size: 28px;
@@ -46,19 +46,23 @@ const SectionContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1300px;
   margin-bottom: 30px;
 `;
 
 const Section = styled.div`
   width: 30%;
+  font-weight: 550;
   background-color: #FFD900;
   padding: 30px;
   border-radius: 0px;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
 
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
+  }
 `;
 
 const ButtonGroup = styled.div`
@@ -90,6 +94,7 @@ const ButtonGroup = styled.div`
 const AdminOptionsButton = styled.button`
   background-color: #CCCCCC;
   color: #333;
+  font-family: "Quicksand", sans-serif;
 
   &:hover {
     background-color: #b3b3b3;
@@ -99,10 +104,32 @@ const AdminOptionsButton = styled.button`
 const ReportAccountButton = styled.button`
   background-color: #FF4D4D;
   color: white;
+  font-family: "Quicksand", sans-serif;
 
   &:hover {
     background-color: #e60000;
   }
+`;
+
+const DeleteAccountButton = styled.button`
+  background-color: #000000;
+  color: #FFFFFF;
+  font-family: "Quicksand", sans-serif;
+
+  &:hover {
+    background-color: #b3b3b3;
+  }
+`;
+
+const SelectStudentDropdown = styled.select`
+  font-family: "Quicksand", sans-serif;
+  font-weight: 550;
+  font-size: 15px;
+  height: 50px;
+  margin: 10px 0;
+  padding-left: 10px;
+  border: none;
+  border-radius: 10px;
 `;
 
 const UserActivitySection = styled(Section)`
@@ -137,11 +164,14 @@ const ActivityButtons = styled.div`
   display: flex;
 
   button {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 550;
     margin-left: 10px;
     padding: 10px 15px;
     background-color: #333;
     color: white;
     border-radius: 8px;
+    height: 40px;
     transition: background-color 0.3s ease;
 
     &:hover {
@@ -163,7 +193,7 @@ const EditingStudent = () => {
     <Container>
       <Header>Edit Student</Header>
       <UserContainer>
-        <ProfilePicture />
+        {/* <ProfilePicture /> */}
         <UserName>Student Name</UserName>
       </UserContainer>
       <SectionContainer>
@@ -174,8 +204,13 @@ const EditingStudent = () => {
           <p>Last joined: 5/24/24</p>
           <p>Email: example@site.com</p>
           <ButtonGroup>
+            <SelectStudentDropdown>
+              <option value="none" selected disabled hidden>View Another Student</option>
+              {/* Add other options for students here */}
+            </SelectStudentDropdown>
             <AdminOptionsButton>⚙️ Admin Options</AdminOptionsButton>
             <ReportAccountButton>Report Account</ReportAccountButton>
+            <DeleteAccountButton>Delete Account</DeleteAccountButton>
           </ButtonGroup>
         </Section>
         <Section>
@@ -187,23 +222,23 @@ const EditingStudent = () => {
           <ActivityItem>
             <ActivityDetails>
               <div>Assignment History</div>
-              <div>Submitted: 13</div>
-              <div>Missing: 3</div>
+              <div>Submitted: N/A</div>
+              <div>Missing: N/A</div>
             </ActivityDetails>
             <ActivityButtons>
-              <button>View</button>
-              <button>Report</button>
+              <button>Coming soon!</button>
+              <button>N/A</button>
             </ActivityButtons>
           </ActivityItem>
           <ActivityItem>
             <ActivityDetails>
-              <div>Instructor: Instructor A</div>
-              <div>Class: Java</div>
-              <div>Class Avg: B (85.28%)</div>
+              <div>Instructor: N/A</div>
+              <div>Class: N/A</div>
+              <div>Class Avg: N/A</div>
             </ActivityDetails>
             <ActivityButtons>
-              <button>View</button>
-              <button>Report Instructor</button>
+              <button>Coming soon!</button>
+              <button>N/A</button>
             </ActivityButtons>
           </ActivityItem>
           <ActivityItem>
