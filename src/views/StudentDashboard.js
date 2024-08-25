@@ -4,6 +4,7 @@ import axios from "axios";
 import lightbulbIcon from "../assets/lightbulb.png";
 import { UserContext } from "../context/UserContext.js";
 import { RecordingsContext } from "../context/RecordingsContext.js";
+import "../App.css";
 
 const DashboardContainer = styled.div`
   display: flex;
@@ -389,7 +390,7 @@ const StudentDashboard = () => {
   const { recordings } = useContext(RecordingsContext); // Access recordings from context
   const [toDoList, setToDoList] = useState([]);
   const [progressData, setProgressData] = useState([]);
-  const [selectedInstructor, setSelectedInstructor] = useState('Instructor A'); // State for instructor filter
+  const [selectedInstructor, setSelectedInstructor] = useState("Instructor A"); // State for instructor filter
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -415,151 +416,237 @@ const StudentDashboard = () => {
   }, []);
 
   // Filter recordings based on selected instructor
-  const filteredRecordings = recordings.filter(recording => recording.instructor === selectedInstructor);
+  const filteredRecordings = recordings.filter(
+    (recording) => recording.instructor === selectedInstructor,
+  );
 
   if (loading) {
     return <p>Loading...</p>;
   }
 
   return (
-    <DashboardContainer>
-      <DashboardTitle>Student Dashboard</DashboardTitle>
-      <ProfileHeaderTitle>
-        {user?.displayName ? `${user.displayName.split(" ")[0]}'s Profile` : "Profile"}
-      </ProfileHeaderTitle>
-      <DashboardItemsContainer>
-        {/* Profile Section */}
-        <DashboardItem style={{ alignItems: "flex-start" }}>
-          <ProfileContainer>
-            <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
-            <ProfileContentContainer>
-              <ProfileContent>Student: {user?.displayName}</ProfileContent>
-              <ProfileContent>User ID: {user?.uid}</ProfileContent>
-              <ProfileContent>Email: {user?.email}</ProfileContent>
-            </ProfileContentContainer>
-          </ProfileContainer>
-          <ProfileViewButton>View</ProfileViewButton>
-        </DashboardItem>
-        
-        {/* Upcoming Classes Section */}
-        <DashboardItem>
-          <SectionHeader>Upcoming class</SectionHeader>
-          <WhiteBackground style={{ width: "25rem", height: "11.5rem" }}>
-            <ClassInfoContainer>
-              <ClassInfo>Class: Math 3</ClassInfo>
-              <ClassInfo>Meeting: 9</ClassInfo>
-            </ClassInfoContainer>
-            <ClassContent>
-              <ClassContentInfo>July 14th</ClassContentInfo>
-              <ClassContentInfo>6:30 PM - 7:30 PM</ClassContentInfo>
-              <ClassContentInfo>Fractions</ClassContentInfo>
-              <ClassContentInfo>Teacher Name</ClassContentInfo>
-              <JoinClassButton>Join Class</JoinClassButton>
-            </ClassContent>
-          </WhiteBackground>
-        </DashboardItem>
+    <main id={"dashboard__wrapper"}>
+      <header className={"dashboard__header"}>
+        <h1>Student Dashboard</h1>
+        <div className={"dashboard-header__profile"}>
+          <h3>Student Name</h3>
+        </div>
+      </header>
+      <section className={"dashboard__body"}>
+        <div className={"dashboard-account__wrapper"}>
+          <div className={"dashboard-account__information"}>
+            <h2>Account Information</h2>
+            <div className={"dashboard-account-information__list"}>
+              <p>UserID: UserID</p>
+              <p>Class: Java, Math</p>
+              <p>Last Joined: 5/24/24</p>
+              <p>Email: example@site.com</p>
+            </div>
+            <div className={"dashboard-account-information__buttons"}>
+              <button>Edit Info</button>
+              <button>Delete Account</button>
+            </div>
+          </div>
+          <div className={"dashboard-account__messages"}>
+            <h2>Messages</h2>
+            <div className={"dashboard-account-messages__scroll"}>
+              <div className={"dashboard-message__component"}>
+                <p>Class</p>
+                <p>Contacts</p>
+                <p>Instructor</p>
+                <button>View Messages</button>
+              </div>
 
-        {/* Schedule Section */}
-        <DashboardItem>
-          <SectionHeader>Schedule</SectionHeader>
-          <WhiteBackground style={{ width: "25rem", height: "11.5rem", flexDirection: "column", alignItems: "flex-start" }}>
-            <ScheduleContentContainer>
-              <ScheduleContent>Class: Math 3</ScheduleContent>
-              <ScheduleContent>Instructor: Instructor A</ScheduleContent>
-              <ScheduleContent>Class Term: 6/1/24 - 7/21/24</ScheduleContent>
-            </ScheduleContentContainer>
-            <ScheduleInfoContainer>
-              <ScheduleInfo style={{ width: "10rem", height: "4rem" }}>
-                Next Session: 7/14/24
-              </ScheduleInfo>
-              <ScheduleInfo style={{ width: "12rem", height: "4rem" }}>
-                Next Assignment Due: 6/18/24
-              </ScheduleInfo>
-            </ScheduleInfoContainer>
-          </WhiteBackground>
-        </DashboardItem>
-        
-        {/* Todo List Section */}
-        <DashboardItem style={{ gridRow: "span 2", alignItems: "center" }}>
-          <SectionHeader>To-Do List</SectionHeader>
-          <TodoListBody>
-            <TodoListHeader>My To-Do List</TodoListHeader> {/* This line now uses the TodoListHeader */}
-            <CurrentDateContainer>
-              <NavButton>{"<"}</NavButton>
-              June 2024
-              <NavButton>{">"}</NavButton>
-            </CurrentDateContainer>
-            <TodoScrollContainer>
-              {toDoList.map((item) => (
-                <TodoItem key={item.id}>
-                  <span>{item.task}</span>
-                  <span>{item.dueDate}</span>
-                  <TaskButton>View</TaskButton>
-                </TodoItem>
-              ))}
-            </TodoScrollContainer>
-          </TodoListBody>
-        </DashboardItem>
-        
-        {/* Progress Section */}
-        <DashboardItem style={{ gridRow: "span 2" }}>
-          <SectionHeader>Progress</SectionHeader>
-          <ProgressContainer>
-            <ProgressItem>
-              <ProgressContent style={{ fontSize: "2rem" }}>{progressData.assignmentsDone}</ProgressContent>
-              <ProgressContent>Assignments Done</ProgressContent>
-              <ProgressContent style={{ marginTop:'5rem' }}>Assignment Progress</ProgressContent>
-              <ProgressBar max="100" value={progressData.averageProgress} />
-              <ProgressContent>{progressData.averageProgress}%</ProgressContent>
-              <ProgressContent style={{ marginTop:'1rem', fontSize: '1rem' }}>Assignments in Progress:</ProgressContent>
-              <ProgressContent style={{ fontSize: '1rem' }}>{progressData.assignmentsInProgress}</ProgressContent>
-            </ProgressItem>
-            <ProgressItem>
-              <ProgressContent>Teacher's Comments</ProgressContent>
-              <ProgressContent>{progressData.comments}</ProgressContent>
-            </ProgressItem>
-            <ProgressItem style={{ gridColumn: "span 2" }}>
-              <ProgressContent>{progressData.grades} - 99.28%</ProgressContent>
-            </ProgressItem>
-          </ProgressContainer>
-          <ProgressViewButton>View</ProgressViewButton>
-        </DashboardItem>
-
-        {/* Communication Section  */}
-        <DashboardItem>
-          <SectionHeader>Communication</SectionHeader>
-          <CommunicationScrollContainer>
-            <Contact>
-              <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
-              <ContactName>Instructor A</ContactName>
-            </Contact>
-            <Contact>
-              <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
-              <ContactName>Student B</ContactName>
-            </Contact>
-          </CommunicationScrollContainer>
-          <ContactViewButton>View</ContactViewButton>
-        </DashboardItem>
-        
-        {/* Recordings Section */}
-        <DashboardItem>
-          <SectionHeader>Recordings</SectionHeader>
-          <WhiteBackground style={{ height: "7.5rem", width: "25rem", alignItems: "flex-start" }}>
-            <RecordingsScrollContainer>
-              {filteredRecordings.map(recording => (
-                <Recording key={recording.id}>{recording.title}</Recording>
-              ))}
-            </RecordingsScrollContainer>
-            <InstructorDropdown value={selectedInstructor} onChange={(e) => setSelectedInstructor(e.target.value)}>
-              <option value="Instructor A">Instructor A</option>
-              <option value="Instructor B">Instructor B</option>
-            </InstructorDropdown>
-          </WhiteBackground>
-          <RecordingsViewButton>View</RecordingsViewButton>
-        </DashboardItem>
-      </DashboardItemsContainer>
-      {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
-    </DashboardContainer>
+              <div className={"dashboard-message__component"}>
+                <p>Class</p>
+                <p>Contacts</p>
+                <p>Instructor</p>
+                <button>View Messages</button>
+              </div>
+            </div>
+          </div>
+          <div className={"dashboard-account__buttons"}>
+            <button>Report A Problem</button>
+            <button>Options</button>
+          </div>
+        </div>
+        <div className={"dashboard__schedule"}>
+          <h2>Class Schedule</h2>
+          <div className={"dashboard-schedule__content"}>
+            <div className={"dashboard-schedules__body"}>
+              <div className={"dashboard-schedule__component"}>
+                <p>Meeting 1</p>
+                <p>Meeting 1</p>
+                <p>Meeting 1</p>
+                <p>Meeting 1</p>
+              </div>
+            </div>
+            <div className={"dashboard-schedules__buttons"}>
+              <button>Schedule a new meeting</button>
+              <button>Reschedule a new meeting</button>
+              <button>Cancel a meeting</button>
+            </div>
+          </div>
+        </div>
+        <div className={"dashboard-course__options"}>
+          <div className={"dashboard-course-options__header"}>
+            <aside className={"dashboard-course-options-header__container"}>
+              <h2>Course Options</h2>
+              <h4>Choose Course</h4>
+            </aside>
+            <aside className={"select__container"}>
+              <select name="cars" id="cars">
+                <option value="volvo">Select Class</option>
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="opel">Opel</option>
+                <option value="audi">Audi</option>
+              </select>
+            </aside>
+          </div>
+          <div className={"dashboard-course__controls"}>
+            <button>Request a change/Addition</button>
+            <button>Request to remove</button>
+          </div>
+          <div className={"dashboard-instructor__controls"}>
+            <p>Instructor: Instructor A</p>
+            <div className={"dashboard-instructor-controls__button"}>
+              <button>Change Instructor</button>
+              <button>Report a problem</button>
+            </div>
+          </div>
+          <div className={"dashboard-course__info"}>
+            <button>Contact Administrator</button>
+            <button>View Current Course Transcript</button>
+            <button>View Rules and Agreements</button>
+            <button>View Post History</button>
+          </div>
+        </div>
+        <div className={"dashboard-account__preferences"}>
+          <h2>Preferences</h2>
+          <div className={"dashboard-account-preferences__options"}>
+            <div className={"change__language"}>
+              <h3>Language:</h3>
+              <div>
+                <h3>English</h3>
+                <button>Restore Defaults</button>
+              </div>
+            </div>
+            <div className={"checkbox-info"}>
+              <h3>Allow Notification:</h3>
+              <div>
+                <input
+                  type="checkbox"
+                  id="vehicle1"
+                  name="vehicle1"
+                  value="Bike"
+                />
+              </div>
+            </div>
+            <div className={"checkbox-info"}>
+              <h3>Dark Mode:</h3>
+              <div>
+                <input
+                  type="checkbox"
+                  id="vehicle1"
+                  name="vehicle1"
+                  value="Bike"
+                />
+              </div>
+            </div>
+            <div className={"checkbox-info"}>
+              <h3>Allow 2FA:</h3>
+              <div>
+                <input
+                  type="checkbox"
+                  id="vehicle1"
+                  name="vehicle1"
+                  value="Bike"
+                />
+              </div>
+            </div>
+            <div className={"checkbox-info"}>
+              <h3>Allow Contact via SMS:</h3>
+              <div>
+                <input
+                  type="checkbox"
+                  id="vehicle1"
+                  name="vehicle1"
+                  value="Bike"
+                />
+              </div>
+            </div>
+            <div className={"range"}>
+              <h3>Brightness</h3>
+              <div className={"range__parent"}>
+                <input
+                  type="range"
+                  id="points"
+                  name="points"
+                  min="0"
+                  max="10"
+                />
+                <div>
+                  <p>0</p>
+                  <p>100</p>
+                </div>
+              </div>
+            </div>
+            <div className={"range"}>
+              <h3>Text Size</h3>
+              <div className={"range__parent"}>
+                <input
+                  type="range"
+                  id="points"
+                  name="points"
+                  min="0"
+                  max="10"
+                />
+                <div>
+                  <p>0</p>
+                  <p>100</p>
+                </div>
+              </div>
+            </div>
+            <div className={"range"}>
+              <h3>Mic Volume</h3>
+              <div className={"range__parent"}>
+                <input
+                  type="range"
+                  id="points"
+                  name="points"
+                  min="0"
+                  max="10"
+                />
+                <div>
+                  <p>0</p>
+                  <p>100</p>
+                </div>
+              </div>
+            </div>
+            <div className={"range"}>
+              <h3>Speaker Volume</h3>
+              <div className={"range__parent"}>
+                <input
+                  type="range"
+                  id="points"
+                  name="points"
+                  min="0"
+                  max="10"
+                />
+                <div>
+                  <p>0</p>
+                  <p>100</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={"dashboard-account-preferences__buttons"}>
+            <button>Restore Defaults</button>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 };
 
