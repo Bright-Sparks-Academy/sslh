@@ -31,7 +31,6 @@ import { RecordingsProvider } from './context/RecordingsContext.js';
 const App = () => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -48,15 +47,10 @@ const App = () => {
         setUser(null);
         setRole(null);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
