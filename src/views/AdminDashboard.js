@@ -58,6 +58,7 @@ const DashboardTitle = styled.header`
   font-size: 2.5rem;
   font-weight: bold;
   padding-top: 95px;
+  margin-bottom: 50px;
 `;
 
 const AccountInfo = styled.div`
@@ -388,11 +389,6 @@ const AdminDashboard = () => {
                 <ManagedUserInfo>Students:</ManagedUserInfo>
                 <EditButton>Edit</EditButton>
               </ProfileSectionContainer>
-              <ProfileSectionContainer>
-                <ManagedUserInfo>Class Avg</ManagedUserInfo>
-                <LetterGrade>B</LetterGrade>
-                <NumberGrade>99.28%</NumberGrade>
-              </ProfileSectionContainer>
             </UserContainer>
           </ScrollContainer>
         </DashboardItem>
@@ -462,10 +458,6 @@ const AdminDashboard = () => {
                 <ManagedUserInfo>Recordings:</ManagedUserInfo>
                 <ManagedUserInfo>Students:</ManagedUserInfo>
                 <EditButton>Edit</EditButton>
-              </ProfileSectionContainer>
-              <ProfileSectionContainer>
-                <LetterGrade>B</LetterGrade>
-                <NumberGrade>99.28%</NumberGrade>
               </ProfileSectionContainer>
             </UserContainer>
           </ScrollContainer>
