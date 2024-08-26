@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import axios from "axios";
+import React from 'react';
+// import axios from "axios";
 import styled from 'styled-components';
 import editIcon from '../assets/draft.png'
-import plusIcon from '../assets/Plus.png'
+// import plusIcon from '../assets/Plus.png'
 
 const PageContainer = styled.div`
   display: flex;
@@ -139,13 +139,13 @@ const EditButton = styled.button`
   cursor: pointer;
 `;
 
-const LetterGrade = styled.h1`
-  margin: 0;
-`;
+// const LetterGrade = styled.h1`
+//   margin: 0;
+// `;
 
-const NumberGrade = styled.h4`
-  margin: 0;
-`;
+// const NumberGrade = styled.h4`
+//   margin: 0;
+// `;
 
 const DropdownContainer = styled.div`
   display: flex;
@@ -275,16 +275,16 @@ const ViewMaterialButton = styled.button`
   cursor: pointer;
 `;
 
-const IconContainer = styled.div`
-  width: 100%;
-  direction: rtl;
-`;
+// const IconContainer = styled.div`
+//   width: 100%;
+//   direction: rtl;
+// `;
 
-const EditMaterialIcon = styled.div`
-  width: 1rem;
-  height: 1rem;
-  background-color: lightgray;
-`;
+// const EditMaterialIcon = styled.div`
+//   width: 1rem;
+//   height: 1rem;
+//   background-color: lightgray;
+// `;
 
 const ChatroomLabel = styled.header`
   margin-top: 1rem;
@@ -319,39 +319,39 @@ const ChatroomButton = styled.button`
 
 
 const AdminDashboard = () => {
-  const [adminInfo, setAdminInfo] = useState(null);
-  const [instructorData, setInstructorData] = useState(null);
-  const [courseMaterialData, setCourseMaterialData] = useState(null);
-  const [chatroomMonitorData, setChatroomMonitorData] = useState(null);
-  const [isAdminInfoOpened, setIsAdminInfoOpened] = useState(false);
-  const [error, setError] = useState(null);
+  // const [adminInfo, setAdminInfo] = useState(null);
+  // const [instructorData, setInstructorData] = useState(null);
+  // const [courseMaterialData, setCourseMaterialData] = useState(null);
+  // const [chatroomMonitorData, setChatroomMonitorData] = useState(null);
+  // const [isAdminInfoOpened, setIsAdminInfoOpened] = useState(false);
+  // const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [adminInfoResponse, courseMaterialDataResponse, instructorDataResponse, chatroomMonitorDataResponse] = await Promise.all([
-          axios.get("http://localhost:3000/api/admin-info"),
-          axios.get("http://localhost:3000/api/course-materials"),
-          axios.get("http://localhost:3000/api/instructors"),
-          axios.get("http://localhost:3000/api/chatroom-monitor"),
-        ]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const [adminInfoResponse, courseMaterialDataResponse, instructorDataResponse, chatroomMonitorDataResponse] = await Promise.all([
+  //         axios.get("http://localhost:3000/api/admin-info"),
+  //         axios.get("http://localhost:3000/api/course-materials"),
+  //         axios.get("http://localhost:3000/api/instructors"),
+  //         axios.get("http://localhost:3000/api/chatroom-monitor"),
+  //       ]);
   
-        setAdminInfo(adminInfoResponse.data);
-        setCourseMaterialData(courseMaterialDataResponse.data);
-        setInstructorData(instructorDataResponse.data);
-        setChatroomMonitorData(chatroomMonitorDataResponse.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError(error);
-      }
-    };
+  //       setAdminInfo(adminInfoResponse.data);
+  //       setCourseMaterialData(courseMaterialDataResponse.data);
+  //       setInstructorData(instructorDataResponse.data);
+  //       setChatroomMonitorData(chatroomMonitorDataResponse.data);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setError(error);
+  //     }
+  //   };
   
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  const displayAdminInfo = () => {
-    setIsAdminInfoOpened(!isAdminInfoOpened);
-  };
+  // const displayAdminInfo = () => {
+  //   setIsAdminInfoOpened(!isAdminInfoOpened);
+  // };
 
   return (
     <PageContainer>
