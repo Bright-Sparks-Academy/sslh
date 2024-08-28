@@ -194,13 +194,13 @@ const EditTeacher = () => {
             <h3>All Students</h3>
             <StudentItem>
               <span>Student A</span>
-              <ViewButton onClick={() => navigate('/admin-editing-student')}>Edit</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              {/* <ViewButton onClick={() => navigate('/admin-editing-student')}>Edit</ViewButton>
+              <ViewButton red>Report</ViewButton> */}
             </StudentItem>
             <StudentItem>
               <span>Student B</span>
-              <ViewButton onClick={() => navigate('/admin-editing-student')}>Edit</ViewButton>
-              <ViewButton red>Report</ViewButton>
+              {/* <ViewButton onClick={() => navigate('/admin-editing-student')}>Edit</ViewButton>
+              <ViewButton red>Report</ViewButton> */}
             </StudentItem>
           </StudentListContainer>
         </UserActivityContainer>
