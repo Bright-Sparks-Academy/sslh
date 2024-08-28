@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import userIcon from "../assets/user.png";
+import axios from "axios";
+import { ViewAccount } from "../components/Modals.js"
 
 const ScrollbarStyles = createGlobalStyle`
   ::-webkit-scrollbar {
@@ -237,7 +239,59 @@ const CreateButton = styled.button`
   cursor: pointer;
 `;
 
+
+const Card = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 20px;
+`;
+
+const CardHeader = styled.div`
+  font-weight: bold;
+  margin-bottom: 10px;
+`;
+
+const CardBody = styled.div`
+  padding: 0;
+`;
+
+const CardList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const CardItem = styled.li`
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+`;
+
 const ConnectionsPage = () => {
+   const [managedStudents, setManagedStudents] = useState(null);
+  const [managedTeachers, setManagedTeachers] = useState(null);
+  const [Error, setError] = useState('');
+  const[connections, setConnections] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [managedResponse, connectionsResponse] = await Promise.all([
+          axios.get("http://localhost:3000/api/managed-entities"), 
+          axios.get("http://localhost:3000/api/connections")]);
+        setManagedStudents(managedResponse.data["students"].map(object => JSON.parse(object)));
+        setManagedTeachers(managedResponse.data["teachers"]).map(object => JSON.parse(object));
+        console.log(managedStudents);
+        console.log(managedTeachers);
+        setConnections(connectionsResponse.data.map(object => JSON.parse(object)));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+
   return (
     <ConnectionsContainer>
         <ScrollbarStyles />
@@ -247,19 +301,24 @@ const ConnectionsPage = () => {
               <SectionHeader>Current Connections</SectionHeader>
               <WhiteBackground>
                 <ScrollContainer>
-                  <ConnectionContainer>
-                    <UserIcon src={userIcon} alt='Profile'/>
-                    <CurrentConnectionInfoContainer>
-                      <CurrentConnectionInfo>Instructor: </CurrentConnectionInfo>
-                      <CurrentConnectionInfo>Student: </CurrentConnectionInfo>
-                      <CurrentConnectionInfo>Status: {/* Either active, terminated, or pending */}</CurrentConnectionInfo>
-                      <ButtonContainer>
-                        <ConnectionButton style={{ backgroundColor: 'black', color: 'white'}}>View</ConnectionButton>
-                        <ConnectionButton style={{ backgroundColor: 'red', color: 'white' }}>Report</ConnectionButton>
-                        <ConnectionButton style={{ backgroundColor: '#ffd900' }}>Terminate</ConnectionButton>
-                      </ButtonContainer>
-                    </CurrentConnectionInfoContainer>
-                  </ConnectionContainer>
+                  {/*Uncomment it and see if it works! connections.map((connection, index) => (
+                <ConnectionContainer key={connection.id}> 
+                  <ProfileSectionContainer>
+                    <UserIcon src={userIcon} style={{ marginLeft: '0' }} alt='Profile'/>
+                    <ConnectionInfo>{connection.student}</ConnectionInfo>
+                  </ProfileSectionContainer>
+                  <ProfileSectionContainer style={{ alignItems: 'flex-start' }}>
+                    <ConnectionInfo>Class {connection.class}</ConnectionInfo>
+                    <ConnectionInfo>Assignments:</ConnectionInfo>
+                    <ConnectionInfo>Joined:</ConnectionInfo>
+                    <ViewButton>View</ViewButton>
+                  </ProfileSectionContainer>
+                  <ProfileSectionContainer>
+                    <LetterGrade>A</LetterGrade>
+                    <NumberGrade>99.28%</NumberGrade>
+                  </ProfileSectionContainer>
+                </ConnectionContainer>
+              ))*/}
                 </ScrollContainer>
                 <EditConnectionButton>Edit Connection</EditConnectionButton>
               </WhiteBackground>
@@ -268,29 +327,64 @@ const ConnectionsPage = () => {
             <Section>
                 <SectionHeader>Create Connection</SectionHeader>
                 <CreateConnectionContainer>
-                  <WhiteBackground>
-                    <ManageButtonContainer>
-                      <CreateConnectionButton style={{ backgroundColor: '#ffd900' }}>Managed Students</CreateConnectionButton>
-                      <CreateConnectionButton style={{ backgroundColor: 'black', color: 'white' }}>Managed Teachers</CreateConnectionButton>
-                    </ManageButtonContainer>
-                    <Label>Mangaged Students:</Label>
+                   <WhiteBackground>
+                    <Label>Managed Students:</Label>
                     <ScrollContainer style={{height: '20rem' }}>
-                      <ConnectionContainer>
-                        <ProfileSectionContainer>
-                          <UserIcon src={userIcon} style={{ marginLeft: '0' }} alt='Profile'/>
-                          <ConnectionInfo>Student A</ConnectionInfo>
-                        </ProfileSectionContainer>
-                        <ProfileSectionContainer style={{ alignItems: 'flex-start' }}>
-                          <ConnectionInfo>Class:</ConnectionInfo>
-                          <ConnectionInfo>Assignments:</ConnectionInfo>
-                          <ConnectionInfo>Joined:</ConnectionInfo>
-                          <ViewButton>View</ViewButton>
-                        </ProfileSectionContainer>
-                        {/* <ProfileSectionContainer>
-                          <LetterGrade>A</LetterGrade>
-                          <NumberGrade>99.28%</NumberGrade>
-                        </ProfileSectionContainer> */}
-                      </ConnectionContainer>
+                      {/*managedStudents.forEach(managedStudent => {
+                        if ("name" in managedStudent) {
+                          (<>
+                          <ConnectionContainer>
+                            <ProfileSectionContainer>
+                              <UserIcon src={userIcon} style={{ marginLeft: '0' }} alt='Profile'/>
+                              <ConnectionInfo>{managedStudent["name"]}</ConnectionInfo>
+                            </ProfileSectionContainer>
+                            <ProfileSectionContainer style={{ alignItems: 'flex-start' }}>
+                              <ConnectionInfo>Class: {managedStudent.class}</ConnectionInfo>
+                              <ConnectionInfo>Assignments: {}</ConnectionInfo>
+                              <ConnectionInfo>Joined:</ConnectionInfo>
+                              <ViewAccount>
+                                <Card>
+                                  <CardHeader>{managedStudent.name}</CardHeader>
+                                    <CardBody>
+                                     <CardList>
+                                      <CardItem className="card-item">Student Id: {managedStudent (Not sure about how to acces id!)}</CardItem>
+                                      <CardItem className="card-item">Email: {managedStudent.email}</CardItem>
+                                      </CardList>
+                                  <CardBody>
+                                  </Card>
+                              </ViewAccount>
+                            </ProfileSectionContainer>
+                            <ProfileSectionContainer>
+                              <LetterGrade>A</LetterGrade>
+                              <NumberGrade>99.28%</NumberGrade>
+                            </ProfileSectionContainer>
+                          </ConnectionContainer>
+                          </>)
+                      }
+                      })*/}
+                    <Label>Managed Teachers:</Label>
+                     {/*managedTeachers.forEach(managedTeacher => {
+                        if ("name" in managedTeacher) {
+                          (<>
+                          <ConnectionContainer>
+                            <ProfileSectionContainer>
+                              <UserIcon src={userIcon} style={{ marginLeft: '0' }} alt='Profile'/>
+                              <ConnectionInfo>{managedTeacher["name"]}</ConnectionInfo>
+                            </ProfileSectionContainer>
+                            <ProfileSectionContainer style={{ alignItems: 'flex-start' }}>
+                              <ConnectionInfo>Class: {managedTeacher["class"]}</ConnectionInfo>
+                              <ConnectionInfo>Assignments: {}</ConnectionInfo>
+                              <ConnectionInfo>Joined:</ConnectionInfo>
+                              <ViewButton>View</ViewButton>
+                            </ProfileSectionContainer>
+                            <ProfileSectionContainer>
+                              <LetterGrade>A</LetterGrade>
+                              <NumberGrade>99.28%</NumberGrade>
+                            </ProfileSectionContainer>
+                          </ConnectionContainer>
+                          </>)
+                      }
+                      })*/}
                     </ScrollContainer>
                   </WhiteBackground>
 
