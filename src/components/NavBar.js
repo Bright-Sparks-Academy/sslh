@@ -3,15 +3,15 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import lightbulbIcon from '../assets/lightbulb.png';
 import { auth, db } from './../firebaseConfig.js';
-import { doc, getDoc } from 'firebase/firestore';
-import MenuButton from '../assets/menuButton.png';
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import MenuButton from "../assets/menuButton.png";
 
 const NavBarContainer = styled.nav`
   position: fixed;
   top: 0;
   width: 98%;
   background-color: #fff;
-  color: #FFD900;
+  color: #ffd900;
   display: flex;
   justify-content: space-between;
   align-items: center; /* Align items horizontally on the same line */
@@ -77,33 +77,47 @@ const DropdownItem = styled(Link)`
 
 const NavBar = () => {
   const [userRole, setUserRole] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [teacherCalendlyLink, setTeacherCalendlyLink] = useState(""); //For students only!
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+ 
   useEffect(() => {
     const fetchUserRole = async () => {
       const user = auth.currentUser;
       if (user) {
         try {
-          const userDocRef = doc(db, 'users', user.uid);
+          const userDocRef = doc(db, "users", user.uid);
           const userDoc = await getDoc(userDocRef);
 
           if (userDoc.exists()) {
             setUserRole(userDoc.data().role);
+            if (userRole === "Student") {
+              const studentSnapshot = await getDocs(
+                collection(db, "users", user.uid)
+              );
+              setTeacherCalendlyLink(
+                studentSnapshot.docs[0].data().teacherCalendlyLink
+              );
+            }
           } else {
-            console.error('User document does not exist.');
+            console.error("User document does not exist.");
           }
         } catch (error) {
-          console.error('Error fetching user role:', error);
+          console.error("Error fetching user role:", error);
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
-
     fetchUserRole();
   }, []);
 
@@ -124,6 +138,7 @@ const NavBar = () => {
           <NavLink to="/student-dashboard" $isActive={location.pathname === '/student-dashboard'}>Dashboard</NavLink>
           <NavLink to="/scheduling" $isActive={location.pathname === '/scheduling'}>Schedule</NavLink>
           <NavLink to="/messaging" $isActive={location.pathname === '/messaging'}>Messaging</NavLink>
+          <NavLink pathname={teacherCalendlyLink}>Schedule</NavLink>
         </>
       );
     } else if (userRole === 'Teacher') {
